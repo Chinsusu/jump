@@ -8,6 +8,24 @@
         AllowsTransparency="True"
         Background="Transparent"
         ResizeMode="CanResizeWithGrip">
+    <Window.Resources>
+        <Style x:Key="TitleButtonStyle" TargetType="Button">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1E293B"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Border Background="White" CornerRadius="8" BorderBrush="#1B2435" BorderThickness="1">
             <Grid>
@@ -18,18 +36,37 @@
                     </LinearGradientBrush>
                 </Grid.Background>
 
-                <!-- Drag bar -->
-                <Rectangle Height="32"
-                           Fill="#00000000"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Top"
-                           MouseDown="DragArea_MouseDown"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- Title bar -->
+                    <Grid Grid.Row="0" Background="#0F172A" Opacity="0.9">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                <TextBlock Text="ShadowFox UI base theme"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontSize="20"
-                           Foreground="#E5E7EB"/>
+                        <Rectangle Fill="#00000000"
+                                   MouseDown="DragArea_MouseDown"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
+                            <Button Style="{StaticResource TitleButtonStyle}" Click="Minimize_Click" Content="&#xE949;" />
+                            <Button Style="{StaticResource TitleButtonStyle}" Click="Maximize_Click" Content="&#xE739;" />
+                            <Button Style="{StaticResource TitleButtonStyle}" Click="Close_Click" Content="&#xE106;" Foreground="#EF4444" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Content -->
+                    <Grid Grid.Row="1">
+                        <TextBlock Text="ShadowFox UI base theme"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   FontSize="20"
+                                   Foreground="#E5E7EB"/>
+                    </Grid>
+                </Grid>
             </Grid>
         </Border>
     </Grid>
