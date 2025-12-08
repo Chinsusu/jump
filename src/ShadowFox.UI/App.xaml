@@ -21,6 +21,9 @@
             <SolidColorBrush x:Key="BrushCard" Color="{StaticResource CardColor}"/>
             <SolidColorBrush x:Key="BrushTextPrimary" Color="{StaticResource TextPrimaryColor}"/>
             <SolidColorBrush x:Key="BrushTextSecondary" Color="{StaticResource TextSecondaryColor}"/>
+
+            <!-- Fluent icon font (Win11) with fallback to Segoe MDL2 Assets -->
+            <FontFamily x:Key="FluentIconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

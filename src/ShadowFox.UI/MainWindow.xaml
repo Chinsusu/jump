@@ -89,8 +89,7 @@
                 <TextBlock Text="Antidetect Browser" FontSize="12" Foreground="#C7D2FE" Margin="0,0,0,16"/>
                 <Separator Margin="0,0,0,12" Background="#2E3A5D" Height="1"/>
 
-                <Button Content="Profile Management"
-                        Command="{Binding SelectProfileTabCommand}">
+                <Button Command="{Binding SelectProfileTabCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                             <Style.Triggers>
@@ -101,6 +100,12 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE77B;" Margin="0,0,10,0" FontSize="16"/>
+                            <TextBlock Text="Profile Management"/>
+                        </StackPanel>
+                    </Button.Content>
                 </Button>
                 <StackPanel>
                     <Button Content="All Profiles"
@@ -113,8 +118,7 @@
                             Style="{StaticResource SubNavButtonUnassigned}"
                             Command="{Binding SelectUnassignedSubTabCommand}" />
                 </StackPanel>
-                <Button Content="Proxy Management"
-                        Command="{Binding SelectProxyTabCommand}">
+                <Button Command="{Binding SelectProxyTabCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                             <Style.Triggers>
@@ -125,9 +129,14 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE774;" Margin="0,0,10,0" FontSize="16"/>
+                            <TextBlock Text="Proxy Management"/>
+                        </StackPanel>
+                    </Button.Content>
                 </Button>
-                <Button Content="Proxy Shop"
-                        Command="{Binding SelectShopTabCommand}">
+                <Button Command="{Binding SelectShopTabCommand}">
                     <Button.Style>
                         <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
                             <Style.Triggers>
@@ -138,6 +147,12 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE7BF;" Margin="0,0,10,0" FontSize="16"/>
+                            <TextBlock Text="Proxy Shop"/>
+                        </StackPanel>
+                    </Button.Content>
                 </Button>
             </StackPanel>
         </Border>
