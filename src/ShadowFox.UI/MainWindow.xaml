@@ -7,46 +7,31 @@
         xmlns:models="clr-namespace:ShadowFox.UI.Models"
         mc:Ignorable="d"
         Title="ShadowFox - Antidetect Browser"
-        Height="800"
-        Width="1280"
-        WindowStartupLocation="CenterScreen"
-        Background="#F5F6FA">
+        Width="1360"
+        Height="860"
+        Background="{StaticResource BrushCard}"
+        WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <conv:UaConverter x:Key="UaConverter" />
 
         <Style x:Key="NavButton" TargetType="Button">
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="Padding" Value="14,10"/>
             <Setter Property="Margin" Value="0,6,0,0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}">
-                    <Setter Property="Background" Value="#2E3A5D"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style TargetType="Button" x:Key="NavButtonProxy" BasedOn="{StaticResource NavButton}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProxyManagement}">
-                    <Setter Property="Background" Value="#2E3A5D"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style TargetType="Button" x:Key="NavButtonShop" BasedOn="{StaticResource NavButton}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ShopProxy}">
-                    <Setter Property="Background" Value="#2E3A5D"/>
-                    <Setter Property="Foreground" Value="White"/>
-                </DataTrigger>
-            </Style.Triggers>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter VerticalAlignment="Center" Margin="8,0,0,0"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="SubNavButton" TargetType="Button">
@@ -90,20 +75,33 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="260"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Sidebar -->
-        <Border Grid.Column="0" Background="#1C2340" Padding="20">
+        <Border Grid.Column="0"
+                Background="{StaticResource BrushSurface}"
+                Padding="20"
+                CornerRadius="0,12,12,0">
             <StackPanel>
                 <TextBlock Text="ShadowFox" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,0,0,4"/>
                 <TextBlock Text="Antidetect Browser" FontSize="12" Foreground="#C7D2FE" Margin="0,0,0,16"/>
                 <Separator Margin="0,0,0,12" Background="#2E3A5D" Height="1"/>
 
                 <Button Content="Profile Management"
-                        Style="{StaticResource NavButton}"
-                        Command="{Binding SelectProfileTabCommand}" />
+                        Command="{Binding SelectProfileTabCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}">
+                                    <Setter Property="Background" Value="#2E3A5D"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <StackPanel>
                     <Button Content="All Profiles"
                             Style="{StaticResource SubNavButtonAll}"
@@ -116,62 +114,73 @@
                             Command="{Binding SelectUnassignedSubTabCommand}" />
                 </StackPanel>
                 <Button Content="Proxy Management"
-                        Style="{StaticResource NavButtonProxy}"
-                        Command="{Binding SelectProxyTabCommand}" />
+                        Command="{Binding SelectProxyTabCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProxyManagement}">
+                                    <Setter Property="Background" Value="#2E3A5D"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <Button Content="Proxy Shop"
-                        Style="{StaticResource NavButtonShop}"
-                        Command="{Binding SelectShopTabCommand}" />
+                        Command="{Binding SelectShopTabCommand}">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ShopProxy}">
+                                    <Setter Property="Background" Value="#2E3A5D"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </StackPanel>
         </Border>
 
         <!-- Content -->
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="1" Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Background="White" Padding="14" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+            <Border Background="{StaticResource BrushCard}" Padding="12" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Profile Management" FontSize="18" FontWeight="SemiBold" Foreground="#111827"/>
-                    <TextBlock Text="{Binding SelectedTab, StringFormat='  |  {0}'}" FontSize="12" Foreground="#6B7280" Margin="8,3,0,0"/>
-                    <TextBlock Text="{Binding SelectedProfileSubTab, StringFormat='  ·  {0}'}" FontSize="12" Foreground="#6B7280" Margin="8,3,0,0"/>
+                    <TextBlock Text="Profile Management" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
+                    <TextBlock Text="{Binding SelectedTab, StringFormat='| {0}'}" FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="6,4,0,0"/>
+                    <TextBlock Text="{Binding SelectedProfileSubTab, StringFormat='· {0}'}" FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="6,4,0,0"/>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Background="White" Margin="0,6,0,0" Padding="16">
+            <Border Grid.Row="1" Background="{StaticResource BrushCard}" Margin="0,10,0,0" Padding="16" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
                 <Grid>
-                <!-- Profile tab -->
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-
-                    <!-- All profiles -->
+                    <!-- All Profiles -->
                     <StackPanel>
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.AllProfiles}">
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}"/>
+                                            <Condition Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.AllProfiles}"/>
+                                        </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
+                                    </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <Button Content="New Profile" Command="{Binding CreateProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                            <Button Content="Edit" Command="{Binding EditProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                            <Button Content="Delete" Command="{Binding DeleteProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                            <Button Content="Refresh" Command="{Binding LoadProfilesCommand}" Padding="12,6"/>
+                            <Button Content="New Profile" Command="{Binding CreateProfileCommand}" Padding="12,6" Background="{StaticResource AccentGradient}" Foreground="White" BorderThickness="0"/>
+                            <Button Content="Edit" Command="{Binding EditProfileCommand}" Padding="12,6" BorderBrush="#E5E7EB" BorderThickness="1" Background="White" />
+                            <Button Content="Delete" Command="{Binding DeleteProfileCommand}" Padding="12,6" Background="#FEE2E2" BorderBrush="#FCA5A5" BorderThickness="1" Foreground="#991B1B"/>
+                            <Button Content="Refresh" Command="{Binding LoadProfilesCommand}" Padding="12,6" BorderBrush="#E5E7EB" BorderThickness="1" Background="White"/>
                         </StackPanel>
 
                         <DataGrid ItemsSource="{Binding Profiles}"
@@ -191,36 +200,42 @@
                         </DataGrid>
                     </StackPanel>
 
-                    <!-- Groups sub tab -->
+                    <!-- Groups -->
                     <StackPanel>
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Groups}">
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}"/>
+                                            <Condition Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Groups}"/>
+                                        </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible"/>
-                                    </DataTrigger>
+                                    </MultiDataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <Button Content="Delete selected" Command="{Binding DeleteSelectedGroupsCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                            <Button Content="New group" Command="{Binding AddGroupCommand}" Padding="12,6" />
-                            <TextBox Width="180"
+                            <Button Content="Delete selected" Command="{Binding DeleteSelectedGroupsCommand}" Padding="12,6" Background="#FEE2E2" BorderBrush="#FCA5A5" BorderThickness="1" Foreground="#991B1B"/>
+                            <Button Content="New group" Command="{Binding AddGroupCommand}" Padding="12,6" Background="{StaticResource AccentGradient}" Foreground="White" BorderThickness="0"/>
+                            <TextBox Width="220"
                                      Margin="12,0,0,0"
                                      HorizontalAlignment="Left"
                                      VerticalAlignment="Center"
-                                     ToolTip="Search groups"
-                                     Text="{Binding SearchGroupText, UpdateSourceTrigger=PropertyChanged}" />
+                                     Text="{Binding SearchGroupText, UpdateSourceTrigger=PropertyChanged}"
+                                     Foreground="{StaticResource BrushTextPrimary}"
+                                     BorderBrush="#E5E7EB"
+                                     Height="34"/>
                         </StackPanel>
 
-                        <DataGrid ItemsSource="{Binding GroupItems}"
+                        <DataGrid ItemsSource="{Binding GroupsView}"
                                   AutoGenerateColumns="False"
                                   CanUserAddRows="False"
                                   HeadersVisibility="Column"
                                   RowHeaderWidth="0"
-                                  IsReadOnly="True">
+                                  IsReadOnly="False">
                             <DataGrid.Columns>
                                 <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected, Mode=TwoWay}" Width="70"/>
                                 <DataGridTextColumn Header="Group name" Binding="{Binding Name}" Width="*" />
@@ -229,64 +244,67 @@
                         </DataGrid>
                     </StackPanel>
 
-                    <!-- Unassigned placeholder -->
+                    <!-- Unassigned -->
                     <StackPanel>
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
                                 <Setter Property="Visibility" Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Unassigned}">
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}"/>
+                                            <Condition Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Unassigned}"/>
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </MultiDataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="Unassigned profiles will appear here." Foreground="{StaticResource BrushTextSecondary}" />
+                    </StackPanel>
+
+                    <!-- Proxy -->
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProxyManagement}">
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <TextBlock Text="Unassigned profiles will appear here." Foreground="#6B7280" />
+                        <TextBlock Text="Proxy Management" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock Text="Quản lý proxy, gán per profile, kiểm tra tình trạng. (Placeholder UI)"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,12"/>
+                        <Border Background="#F3F4F6" Padding="16" CornerRadius="8" BorderBrush="#E5E7EB" BorderThickness="1">
+                            <TextBlock Text="TODO: bảng proxy, checker, bind proxy cho profile." Foreground="{StaticResource BrushTextPrimary}"/>
+                        </Border>
                     </StackPanel>
-                </StackPanel>
 
-                <!-- Proxy tab -->
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProxyManagement}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    <TextBlock Text="Proxy Management" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <TextBlock Text="Quản lý proxy, gán per profile, kiểm tra tình trạng. (Placeholder UI)"
-                               Foreground="#6B7280" Margin="0,0,0,12"/>
-                    <Border Background="#F3F4F6" Padding="16" CornerRadius="6" BorderBrush="#E5E7EB" BorderThickness="1">
-                        <TextBlock Text="TODO: bảng proxy, checker, bind proxy cho profile." Foreground="#4B5563"/>
-                    </Border>
-                </StackPanel>
-
-                <!-- Shop tab -->
-                <StackPanel>
-                    <StackPanel.Style>
-                        <Style TargetType="StackPanel">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ShopProxy}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </StackPanel.Style>
-                    <TextBlock Text="Proxy Shop" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <TextBlock Text="Mua thêm proxy, xem gói, tích hợp provider. (Placeholder UI)"
-                               Foreground="#6B7280" Margin="0,0,0,12"/>
-                    <Border Background="#EEF2FF" Padding="16" CornerRadius="6" BorderBrush="#C7D2FE" BorderThickness="1">
-                        <StackPanel>
-                            <TextBlock Text="Gợi ý: thêm list gói proxy, filter theo quốc gia, nút Buy/Checkout." Foreground="#374151"/>
-                            <TextBlock Text="Hiển thị số proxy còn lại, lịch sử mua, invoice." Foreground="#4B5563" Margin="0,6,0,0"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
+                    <!-- Shop -->
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ShopProxy}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="Proxy Shop" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                        <TextBlock Text="Mua thêm proxy, xem gói, tích hợp provider. (Placeholder UI)"
+                                   Foreground="{StaticResource BrushTextSecondary}" Margin="0,0,0,12"/>
+                        <Border Background="#EEF2FF" Padding="16" CornerRadius="8" BorderBrush="#C7D2FE" BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock Text="Gợi ý: thêm list gói proxy, filter theo quốc gia, nút Buy/Checkout." Foreground="{StaticResource BrushTextPrimary}"/>
+                                <TextBlock Text="Hiển thị số proxy còn lại, lịch sử mua, invoice." Foreground="{StaticResource BrushTextSecondary}" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>

@@ -2,5 +2,25 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="AccentColorStart">#6E63E6</Color>
+            <Color x:Key="AccentColorEnd">#A855F7</Color>
+            <Color x:Key="SurfaceColor">#0F172A</Color>
+            <Color x:Key="SurfaceLighterColor">#111827</Color>
+            <Color x:Key="CardColor">#F8FAFC</Color>
+            <Color x:Key="TextPrimaryColor">#0F172A</Color>
+            <Color x:Key="TextSecondaryColor">#6B7280</Color>
+
+            <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="{StaticResource AccentColorStart}" Offset="0"/>
+                <GradientStop Color="{StaticResource AccentColorEnd}" Offset="1"/>
+            </LinearGradientBrush>
+
+            <SolidColorBrush x:Key="BrushSurface" Color="{StaticResource SurfaceColor}"/>
+            <SolidColorBrush x:Key="BrushSurfaceLight" Color="{StaticResource SurfaceLighterColor}"/>
+            <SolidColorBrush x:Key="BrushCard" Color="{StaticResource CardColor}"/>
+            <SolidColorBrush x:Key="BrushTextPrimary" Color="{StaticResource TextPrimaryColor}"/>
+            <SolidColorBrush x:Key="BrushTextSecondary" Color="{StaticResource TextSecondaryColor}"/>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
