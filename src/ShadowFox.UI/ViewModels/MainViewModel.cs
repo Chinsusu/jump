@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ShadowFox.Core.Models;
 using ShadowFox.Core.Services;
 using ShadowFox.Infrastructure.Repositories;
+using ShadowFox.UI.Models;
 using ShadowFox.UI.Views;
 
 namespace ShadowFox.UI.ViewModels;
@@ -21,6 +22,9 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private Profile? selectedProfile;
+
+    [ObservableProperty]
+    private NavigationTab selectedTab = NavigationTab.ProfileManagement;
 
     public MainViewModel(
         IProfileRepository profileRepository,
@@ -112,4 +116,13 @@ public partial class MainViewModel : ViewModelBase
             await LoadProfilesAsync();
         }
     }
+
+    [RelayCommand]
+    private void SelectProfileTab() => SelectedTab = NavigationTab.ProfileManagement;
+
+    [RelayCommand]
+    private void SelectProxyTab() => SelectedTab = NavigationTab.ProxyManagement;
+
+    [RelayCommand]
+    private void SelectShopTab() => SelectedTab = NavigationTab.ShopProxy;
 }
