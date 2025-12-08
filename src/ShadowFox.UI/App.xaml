@@ -16,6 +16,11 @@
                 <GradientStop Color="{StaticResource AccentColorEnd}" Offset="1"/>
             </LinearGradientBrush>
 
+            <LinearGradientBrush x:Key="NavGradient" StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#11182C" Offset="0"/>
+                <GradientStop Color="#0E1526" Offset="1"/>
+            </LinearGradientBrush>
+
             <SolidColorBrush x:Key="BrushSurface" Color="{StaticResource SurfaceColor}"/>
             <SolidColorBrush x:Key="BrushSurfaceLight" Color="{StaticResource SurfaceLighterColor}"/>
             <SolidColorBrush x:Key="BrushCard" Color="{StaticResource CardColor}"/>

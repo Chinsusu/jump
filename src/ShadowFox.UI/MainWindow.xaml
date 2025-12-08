@@ -15,35 +15,53 @@
         <conv:UaConverter x:Key="UaConverter" />
 
         <!-- Navigation buttons -->
+        <!-- Nav button styles -->
         <Style x:Key="NavPrimaryButton" TargetType="Button">
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Padding" Value="12,10"/>
             <Setter Property="Margin" Value="0,6,0,0"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="Foreground" Value="#D1D5DB"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter VerticalAlignment="Center" Margin="6,0,0,0"/>
-                        </Border>
+                        <Grid>
+                            <Rectangle x:Name="Indicator" Width="4" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Fill="Transparent"/>
+                            <Border x:Name="Pill"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="12"
+                                    Margin="4,0,0,0">
+                                <ContentPresenter VerticalAlignment="Center" Margin="8,0"/>
+                            </Border>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="NavSubButton" TargetType="Button">
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="Margin" Value="12,4,0,0"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="16,2,0,0"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#C7D2FE"/>
+            <Setter Property="Foreground" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="SubAllStyle" TargetType="Button" BasedOn="{StaticResource NavSubButton}">
@@ -80,7 +98,7 @@
 
         <!-- Sidebar -->
         <Border Grid.Column="0"
-                Background="{StaticResource BrushSurface}"
+                Background="{StaticResource NavGradient}"
                 Padding="20"
                 CornerRadius="0,12,12,0">
             <StackPanel>
@@ -93,8 +111,20 @@
                         <Style TargetType="Button" BasedOn="{StaticResource NavPrimaryButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}">
-                                    <Setter Property="Background" Value="#2E3A5D"/>
+                                    <Setter Property="Background" Value="#1F2A44"/>
                                     <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <Rectangle Width="4" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Fill="{StaticResource AccentGradient}"/>
+                                                    <Border Background="#1F2A44" CornerRadius="12" Margin="4,0,0,0">
+                                                        <ContentPresenter VerticalAlignment="Center" Margin="8,0"/>
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -121,8 +151,20 @@
                         <Style TargetType="Button" BasedOn="{StaticResource NavPrimaryButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProxyManagement}">
-                                    <Setter Property="Background" Value="#2E3A5D"/>
+                                    <Setter Property="Background" Value="#1F2A44"/>
                                     <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <Rectangle Width="4" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Fill="{StaticResource AccentGradient}"/>
+                                                    <Border Background="#1F2A44" CornerRadius="12" Margin="4,0,0,0">
+                                                        <ContentPresenter VerticalAlignment="Center" Margin="8,0"/>
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -138,8 +180,20 @@
                         <Style TargetType="Button" BasedOn="{StaticResource NavPrimaryButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ShopProxy}">
-                                    <Setter Property="Background" Value="#2E3A5D"/>
+                                    <Setter Property="Background" Value="#1F2A44"/>
                                     <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Grid>
+                                                    <Rectangle Width="4" HorizontalAlignment="Left" RadiusX="3" RadiusY="3" Fill="{StaticResource AccentGradient}"/>
+                                                    <Border Background="#1F2A44" CornerRadius="12" Margin="4,0,0,0">
+                                                        <ContentPresenter VerticalAlignment="Center" Margin="8,0"/>
+                                                    </Border>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
