@@ -132,3 +132,22 @@ Personalities (
 ## 8. Spoofing JS injection (tom tat)
 - File builder: `SpoofingScriptBuilder` tao string JS ~800 dong, inject vao moi page.
 - Patch: canvas noise/hash, WebGL unmasked vendor/renderer override, AudioContext hash spoof, fonts override (defineProperty), navigator.* override, chrome.runtime spoof, WebRTC leak block, OffscreenCanvas/SVG patch.
+
+## 9. Execution checklist (thuc thi tung phan)
+- Foundation: tao solution, cai DI, logging (Serilog), config options, EF Core migrations (SQLite), seed data.
+- Core domain: Models (Profile/Fingerprint/Proxy/Personality), Result<T>, validation; ProfileService (CRUD, clone, import/export), ProxyService (add/checker/bind), FingerprintGenerator (Basic/Advanced/Ultra presets).
+- Infrastructure: AppDbContext + repositories; SpoofingScriptBuilder (JS), CefInitializer (cache dir per profile, command line switches); Proxy engine (Titanium.Web.Proxy wrapper); config storage (JSON + SQLite).
+- UI (WPF/MVVM): Main shell + navigation, Profile list/detail, Proxy list/detail, Fingerprint editor, Browser launcher window, settings; commands bound to services; theming + data templates.
+- Behavior engine: Personality presets, rule-based executor (JSON), script host (Lua.NET or Roslyn), timers/scheduler per profile, mouse/typing/scroll simulators.
+- Automation: script recorder (mouse/keyboard), task scheduler UI, queue runner (parallel with limits), log viewer.
+- QA/telemetry: unit tests (xUnit) cho generator/services; integration tests for DB; manual test matrix for spoofing (canvas/WebGL/WebRTC/fonts/timezone/UA); performance check (profile startup time, memory per profile).
+
+## 10. Sprint roadmap (de xuat 8 sprint, ~2 tuan/sprint)
+- Sprint 1: Setup solution, DI, Serilog, config, SQLite + EF Core migrations, base models, Result<T>, basic Profile CRUD (no UI), unit tests.
+- Sprint 2: WPF shell + MVVM base, navigation, Profile list/detail UI, Proxy list UI (stub), theming, basic validation binding.
+- Sprint 3: FingerprintGenerator (Basic/Advanced/Ultra) + UI editor; persist fingerprints; export/import profile (JSON).
+- Sprint 4: CefSharp integration, profile-isolated browser launch (cache dir per profile), inject SpoofingScriptBuilder (canvas/WebGL/AudioContext/navigator/chrome.runtime/WebRTC), basic extension loading.
+- Sprint 5: Proxy engine (HTTP/SOCKS5), checker, bind per profile, rotate policy (time-based), UI for proxy binding/check status.
+- Sprint 6: Behavior engine: Personality model + presets, rule-based executor (JSON), mouse/typing/scroll simulation, per-profile schedule; log behavior events.
+- Sprint 7: Automation: script recorder (mouse/keyboard), task scheduler per profile, runner with concurrency cap, UI to manage tasks; cookie import/export.
+- Sprint 8: Hardening & polish: bulk actions, group/tag filters, DB encryption option, extension management UX, performance tuning, spoofing regression tests, release packaging.
