@@ -48,6 +48,44 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+
+        <Style x:Key="SubNavButton" TargetType="Button">
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="12,4,0,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#C7D2FE"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+
+        <Style x:Key="SubNavButtonAll" TargetType="Button" BasedOn="{StaticResource SubNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.AllProfiles}">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SubNavButtonGroups" TargetType="Button" BasedOn="{StaticResource SubNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Groups}">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SubNavButtonUnassigned" TargetType="Button" BasedOn="{StaticResource SubNavButton}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Unassigned}">
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -66,6 +104,17 @@
                 <Button Content="Profile Management"
                         Style="{StaticResource NavButton}"
                         Command="{Binding SelectProfileTabCommand}" />
+                <StackPanel>
+                    <Button Content="All Profiles"
+                            Style="{StaticResource SubNavButtonAll}"
+                            Command="{Binding SelectAllProfilesSubTabCommand}" />
+                    <Button Content="Groups"
+                            Style="{StaticResource SubNavButtonGroups}"
+                            Command="{Binding SelectGroupsSubTabCommand}" />
+                    <Button Content="Unassigned"
+                            Style="{StaticResource SubNavButtonUnassigned}"
+                            Command="{Binding SelectUnassignedSubTabCommand}" />
+                </StackPanel>
                 <Button Content="Proxy Management"
                         Style="{StaticResource NavButtonProxy}"
                         Command="{Binding SelectProxyTabCommand}" />
@@ -86,6 +135,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock Text="Profile Management" FontSize="18" FontWeight="SemiBold" Foreground="#111827"/>
                     <TextBlock Text="{Binding SelectedTab, StringFormat='  |  {0}'}" FontSize="12" Foreground="#6B7280" Margin="8,3,0,0"/>
+                    <TextBlock Text="{Binding SelectedProfileSubTab, StringFormat='  ·  {0}'}" FontSize="12" Foreground="#6B7280" Margin="8,3,0,0"/>
                 </StackPanel>
             </Border>
 

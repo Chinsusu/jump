@@ -26,6 +26,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private NavigationTab selectedTab = NavigationTab.ProfileManagement;
 
+    [ObservableProperty]
+    private ProfileSubTab selectedProfileSubTab = ProfileSubTab.AllProfiles;
+
     public MainViewModel(
         IProfileRepository profileRepository,
         IServiceProvider serviceProvider,
@@ -125,4 +128,13 @@ public partial class MainViewModel : ViewModelBase
 
     [RelayCommand]
     private void SelectShopTab() => SelectedTab = NavigationTab.ShopProxy;
+
+    [RelayCommand]
+    private void SelectAllProfilesSubTab() => SelectedProfileSubTab = ProfileSubTab.AllProfiles;
+
+    [RelayCommand]
+    private void SelectGroupsSubTab() => SelectedProfileSubTab = ProfileSubTab.Groups;
+
+    [RelayCommand]
+    private void SelectUnassignedSubTab() => SelectedProfileSubTab = ProfileSubTab.Unassigned;
 }
