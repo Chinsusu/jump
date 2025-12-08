@@ -4,12 +4,12 @@
         Title="ShadowFox - Base Theme"
         Width="960"
         Height="600"
-        Background="{DynamicResource UiBackground}">
+        Background="#F3F4F6">
     <Grid>
         <TextBlock Text="ShadowFox UI base theme"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="20"
-                   Foreground="{DynamicResource UiForeground}"/>
+                   Foreground="#111827"/>
     </Grid>
 </Window>
