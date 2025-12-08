@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualBasic;
 using ShadowFox.Core.Models;
@@ -166,14 +167,25 @@ public partial class MainViewModel : ViewModelBase
         }
 
         var name = input.Trim();
-        if (await groupRepository.ExistsAsync(name))
+        try
         {
-            MessageBox.Show("Group already exists.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
+            if (await groupRepository.ExistsAsync(name))
+            {
+                MessageBox.Show("Group already exists.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
 
-        await groupRepository.AddAsync(new Group { Name = name });
-        await LoadGroupsAsync();
+            await groupRepository.AddAsync(new Group { Name = name });
+            await LoadGroupsAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+            MessageBox.Show($"Cannot create group: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Unexpected error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     [RelayCommand]
