@@ -29,6 +29,8 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private ProfileSubTab selectedProfileSubTab = ProfileSubTab.AllProfiles;
 
+    public ObservableCollection<GroupItem> GroupItems { get; } = new();
+
     public MainViewModel(
         IProfileRepository profileRepository,
         IServiceProvider serviceProvider,
@@ -38,6 +40,7 @@ public partial class MainViewModel : ViewModelBase
         this.serviceProvider = serviceProvider;
         this.fingerprintGenerator = fingerprintGenerator;
         _ = LoadProfilesAsync();
+        SeedGroups();
     }
 
     [RelayCommand]
@@ -49,6 +52,8 @@ public partial class MainViewModel : ViewModelBase
         {
             Profiles.Add(profile);
         }
+
+        RefreshGroups();
     }
 
     [RelayCommand]
@@ -137,4 +142,24 @@ public partial class MainViewModel : ViewModelBase
 
     [RelayCommand]
     private void SelectUnassignedSubTab() => SelectedProfileSubTab = ProfileSubTab.Unassigned;
+
+    private void SeedGroups()
+    {
+        GroupItems.Clear();
+        GroupItems.Add(new GroupItem { Name = "Unassigned", ProfilesCount = Profiles.Count });
+    }
+
+    private void RefreshGroups()
+    {
+        var unassigned = GroupItems.FirstOrDefault(g => g.Name == "Unassigned");
+        if (unassigned != null)
+        {
+            unassigned.ProfilesCount = Profiles.Count;
+            GroupItems[GroupItems.IndexOf(unassigned)] = unassigned;
+        }
+        else
+        {
+            GroupItems.Add(new GroupItem { Name = "Unassigned", ProfilesCount = Profiles.Count });
+        }
+    }
 }

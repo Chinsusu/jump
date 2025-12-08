@@ -154,28 +154,95 @@
                         </Style>
                     </StackPanel.Style>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                        <Button Content="New Profile" Command="{Binding CreateProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                        <Button Content="Edit" Command="{Binding EditProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                        <Button Content="Delete" Command="{Binding DeleteProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
-                        <Button Content="Refresh" Command="{Binding LoadProfilesCommand}" Padding="12,6"/>
+                    <!-- All profiles -->
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.AllProfiles}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Button Content="New Profile" Command="{Binding CreateProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
+                            <Button Content="Edit" Command="{Binding EditProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
+                            <Button Content="Delete" Command="{Binding DeleteProfileCommand}" Padding="12,6" Margin="0,0,8,0"/>
+                            <Button Content="Refresh" Command="{Binding LoadProfilesCommand}" Padding="12,6"/>
+                        </StackPanel>
+
+                        <DataGrid ItemsSource="{Binding Profiles}"
+                                  SelectedItem="{Binding SelectedProfile}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  IsReadOnly="True"
+                                  RowHeaderWidth="0"
+                                  HeadersVisibility="Column">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
+                                <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="180" />
+                                <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="120" />
+                                <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" Width="160" />
+                                <DataGridTextColumn Header="User Agent" Binding="{Binding FingerprintJson, Converter={StaticResource UaConverter}}" Width="*" />
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </StackPanel>
 
-                    <DataGrid ItemsSource="{Binding Profiles}"
-                              SelectedItem="{Binding SelectedProfile}"
-                              AutoGenerateColumns="False"
-                              CanUserAddRows="False"
-                              IsReadOnly="True"
-                              RowHeaderWidth="0"
-                              HeadersVisibility="Column">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
-                            <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="180" />
-                            <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="120" />
-                            <DataGridTextColumn Header="Created" Binding="{Binding CreatedAt, StringFormat=\{0:yyyy-MM-dd HH:mm\}}" Width="160" />
-                            <DataGridTextColumn Header="User Agent" Binding="{Binding FingerprintJson, Converter={StaticResource UaConverter}}" Width="*" />
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <!-- Groups sub tab -->
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Groups}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <Button Content="Action" Padding="12,6" Margin="0,0,8,0"/>
+                            <Button Content="New group" Padding="12,6" />
+                            <TextBox Width="180"
+                                     Margin="12,0,0,0"
+                                     HorizontalAlignment="Left"
+                                     VerticalAlignment="Center"
+                                     ToolTip="Search groups"
+                                     Text="" />
+                        </StackPanel>
+
+                        <DataGrid ItemsSource="{Binding GroupItems}"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  HeadersVisibility="Column"
+                                  RowHeaderWidth="0"
+                                  IsReadOnly="True">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected}" Width="70"/>
+                                <DataGridTextColumn Header="Group name" Binding="{Binding Name}" Width="*" />
+                                <DataGridTextColumn Header="Number of profiles" Binding="{Binding ProfilesCount}" Width="150" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+
+                    <!-- Unassigned placeholder -->
+                    <StackPanel>
+                        <StackPanel.Style>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Unassigned}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </StackPanel.Style>
+                        <TextBlock Text="Unassigned profiles will appear here." Foreground="#6B7280" />
+                    </StackPanel>
                 </StackPanel>
 
                 <!-- Proxy tab -->
