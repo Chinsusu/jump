@@ -20,11 +20,11 @@
             <Setter Property="Margin" Value="4,0,0,0"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#E5E7EB"/>
+            <Setter Property="Foreground" Value="#A9B1C1"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1E293B"/>
+                    <Setter Property="Background" Value="#1F2937"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -40,7 +40,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Pill" Background="{TemplateBinding Background}" CornerRadius="10" Padding="12,8">
+                        <Border x:Name="Pill" Background="{TemplateBinding Background}" CornerRadius="12" Padding="12,8">
                             <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -48,8 +48,8 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1E293B"/>
-                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Background" Value="#1E2639"/>
+                    <Setter Property="Foreground" Value="#F8FAFC"/>
                 </Trigger>
                 <DataTrigger Value="True">
                     <DataTrigger.Binding>
@@ -59,13 +59,16 @@
                         </MultiBinding>
                     </DataTrigger.Binding>
                     <Setter Property="Background" Value="#1F2A44"/>
-                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="Foreground" Value="#F8FAFC"/>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
     <Grid>
-        <Border Background="White" CornerRadius="8" BorderBrush="#1B2435" BorderThickness="1">
+        <Border Background="#0F1425" CornerRadius="14" BorderBrush="#1E2636" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Color="#000000" BlurRadius="20" ShadowDepth="0" Opacity="0.35"/>
+            </Border.Effect>
             <Grid>
                 <Grid.Background>
                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -92,7 +95,7 @@
                         <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
                             <Button Style="{StaticResource TitleButtonStyle}" Click="Minimize_Click" Content="&#xE949;" />
                             <Button Style="{StaticResource TitleButtonStyle}" Click="Maximize_Click" Content="&#xE739;" />
-                            <Button Style="{StaticResource TitleButtonStyle}" Click="Close_Click" Content="&#xE106;" Foreground="#EF4444" />
+                            <Button Style="{StaticResource TitleButtonStyle}" Click="Close_Click" Content="&#xE10A;" />
                         </StackPanel>
                     </Grid>
 
@@ -104,7 +107,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Sidebar navigation -->
-                        <Border Grid.Column="0" Background="#0F172A" Opacity="0.9" Padding="16" CornerRadius="12">
+                        <Border Grid.Column="0" Background="#11182C" Opacity="0.95" Padding="16" CornerRadius="12" BorderBrush="#1F2A3D" BorderThickness="1">
                             <StackPanel>
                                 <TextBlock Text="Navigation" FontSize="14" FontWeight="SemiBold" Foreground="#E5E7EB" Margin="0,0,0,8"/>
                                 <Button Tag="Profile" Style="{StaticResource NavItemButton}" Click="Nav_Click">
@@ -129,7 +132,7 @@
                         </Border>
 
                         <!-- Content area -->
-                        <Border Grid.Column="1" Background="#101728" CornerRadius="12" BorderBrush="#1F2937" BorderThickness="1" Padding="24">
+                        <Border Grid.Column="1" Background="#161C2C" CornerRadius="12" BorderBrush="#1F2937" BorderThickness="1" Padding="24">
                             <TextBlock Text="{Binding SelectedNav, RelativeSource={RelativeSource AncestorType=Window}, StringFormat='Selected: {0}'}"
                                        Foreground="#E5E7EB" FontSize="16"/>
                         </Border>
