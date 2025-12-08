@@ -1,0 +1,15 @@
+<Window x:Class="ShadowFox.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ShadowFox - Base Theme"
+        Width="960"
+        Height="600"
+        Background="{DynamicResource UiBackground}">
+    <Grid>
+        <TextBlock Text="ShadowFox UI base theme"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="20"
+                   Foreground="{DynamicResource UiForeground}"/>
+    </Grid>
+</Window>
