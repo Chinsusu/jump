@@ -151,3 +151,42 @@ Personalities (
 - Sprint 6: Behavior engine: Personality model + presets, rule-based executor (JSON), mouse/typing/scroll simulation, per-profile schedule; log behavior events.
 - Sprint 7: Automation: script recorder (mouse/keyboard), task scheduler per profile, runner with concurrency cap, UI to manage tasks; cookie import/export.
 - Sprint 8: Hardening & polish: bulk actions, group/tag filters, DB encryption option, extension management UX, performance tuning, spoofing regression tests, release packaging.
+
+## 11. Issue backlog (granular tasks)
+- Foundation
+  - Create solution + projects (Core/Infrastructure/UI/Automation/tests), wire DI container, Serilog config, options pattern.
+  - Add EF Core + SQLite; create AppDbContext, initial migration, seed sample profiles/proxies.
+  - Implement Result<T>, guard utilities, validation helpers.
+- Profile & Fingerprint
+  - Define domain models (Profile/Fingerprint/Proxy/Personality) + DTOs.
+  - Implement IProfileRepository (EF) + ProfileService (CRUD, clone, import/export JSON).
+  - Implement FingerprintGenerator with presets (Basic/Advanced/Ultra) + tests for distribution bounds.
+  - Add JSON import/export for fingerprint sets; validation rules.
+- Proxy
+  - Implement IProxyRepository + ProxyService (add/update/delete).
+  - Build ProxyChecker (HTTP/SOCKS5) with timeout/retries; record latency/anonymity/country.
+  - Proxy rotation policy (time-based/request-based) and binding per profile.
+- Behavior Engine
+  - Define Personality model + presets; schedule parser (WorkHours JSON).
+  - Implement rule-based executor (JSON) for mouse/typing/scroll delays.
+  - Script host (Lua.NET or Roslyn) with sandbox; expose API (mouseMove, typeText, wait, click).
+  - Simulators: mouse Bezier path generator, typing speed/typo injector, scroll pattern.
+- Automation
+  - Recorder: capture mouse/keyboard events; export to script format.
+  - Scheduler: per-profile task queue, concurrency limiter, retry policy.
+  - Runner UI: start/stop/pause tasks, progress + log view.
+- CefSharp & Spoofing
+  - CefInitializer: cache dir per profile, command-line switches (disable-features, proxy).
+  - SpoofingScriptBuilder: compose JS (canvas/WebGL/AudioContext/navigator/chrome.runtime/WebRTC/fonts).
+  - Inject scripts on creation; verify via test pages; add extension loading per profile.
+- UI (WPF/MVVM)
+  - Shell + navigation; Profile list (filter/search/tag); Profile detail editor.
+  - Proxy list/detail with status; checker UI; bind proxy to profile.
+  - Fingerprint editor (presets + manual overrides) with validation hints.
+  - Browser window launcher per profile (open/close, status indicator).
+  - Behavior/Automation tabs: schedule editor, task list, recorder controls.
+- Testing/QA
+  - Unit tests: services (Profile/Fingerprint/Proxy), generators, behavior rules.
+  - Integration: EF Core (SQLite) migrations + repositories; proxy checker with mock server.
+  - Spoofing verification scripts (automated checks for canvas/WebGL/WebRTC/timezone/UA).
+  - Performance checks: profile launch time, memory per profile window, proxy checker throughput.
