@@ -3,18 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="ShadowFox - Base Theme"
         Width="960"
-        Height="600">
+        Height="600"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="CanResizeWithGrip">
     <Grid>
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                <GradientStop Color="#1B1E36" Offset="0"/>
-                <GradientStop Color="#0F172A" Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-        <TextBlock Text="ShadowFox UI base theme"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="20"
-                   Foreground="#E5E7EB"/>
+        <Border Background="White" CornerRadius="8" BorderBrush="#1B2435" BorderThickness="1">
+            <Grid>
+                <Grid.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#1B1E36" Offset="0"/>
+                        <GradientStop Color="#0F172A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Grid.Background>
+
+                <!-- Drag bar -->
+                <Rectangle Height="32"
+                           Fill="#00000000"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Top"
+                           MouseDown="DragArea_MouseDown"/>
+
+                <TextBlock Text="ShadowFox UI base theme"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="20"
+                           Foreground="#E5E7EB"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
