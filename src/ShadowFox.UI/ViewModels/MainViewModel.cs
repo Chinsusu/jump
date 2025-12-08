@@ -1,9 +1,13 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualBasic;
 using ShadowFox.Core.Models;
 using ShadowFox.Core.Services;
 using ShadowFox.Infrastructure.Repositories;
@@ -15,10 +19,13 @@ namespace ShadowFox.UI.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     private readonly IProfileRepository profileRepository;
+    private readonly IGroupRepository groupRepository;
     private readonly IServiceProvider serviceProvider;
     private readonly FingerprintGenerator fingerprintGenerator;
 
     public ObservableCollection<Profile> Profiles { get; } = new();
+    public ObservableCollection<GroupItem> GroupItems { get; } = new();
+    public ICollectionView GroupsView { get; }
 
     [ObservableProperty]
     private Profile? selectedProfile;
@@ -29,18 +36,25 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty]
     private ProfileSubTab selectedProfileSubTab = ProfileSubTab.AllProfiles;
 
-    public ObservableCollection<GroupItem> GroupItems { get; } = new();
+    [ObservableProperty]
+    private string searchGroupText = string.Empty;
 
     public MainViewModel(
         IProfileRepository profileRepository,
+        IGroupRepository groupRepository,
         IServiceProvider serviceProvider,
         FingerprintGenerator fingerprintGenerator)
     {
         this.profileRepository = profileRepository;
+        this.groupRepository = groupRepository;
         this.serviceProvider = serviceProvider;
         this.fingerprintGenerator = fingerprintGenerator;
+
+        GroupsView = CollectionViewSource.GetDefaultView(GroupItems);
+        GroupsView.Filter = FilterGroup;
+
         _ = LoadProfilesAsync();
-        SeedGroups();
+        _ = LoadGroupsAsync();
     }
 
     [RelayCommand]
@@ -52,8 +66,7 @@ public partial class MainViewModel : ViewModelBase
         {
             Profiles.Add(profile);
         }
-
-        RefreshGroups();
+        RefreshGroupCounts();
     }
 
     [RelayCommand]
@@ -143,23 +156,118 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private void SelectUnassignedSubTab() => SelectedProfileSubTab = ProfileSubTab.Unassigned;
 
-    private void SeedGroups()
+    [RelayCommand]
+    private async Task AddGroupAsync()
     {
-        GroupItems.Clear();
-        GroupItems.Add(new GroupItem { Name = "Unassigned", ProfilesCount = Profiles.Count });
+        var input = Interaction.InputBox("Enter new group name", "New group", "");
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return;
+        }
+
+        var name = input.Trim();
+        if (await groupRepository.ExistsAsync(name))
+        {
+            MessageBox.Show("Group already exists.", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        await groupRepository.AddAsync(new Group { Name = name });
+        await LoadGroupsAsync();
     }
 
-    private void RefreshGroups()
+    [RelayCommand]
+    private async Task DeleteSelectedGroupsAsync()
     {
-        var unassigned = GroupItems.FirstOrDefault(g => g.Name == "Unassigned");
-        if (unassigned != null)
+        var targets = GroupItems.Where(g => g.IsSelected && g.Name != "Unassigned").ToList();
+        if (!targets.Any())
         {
-            unassigned.ProfilesCount = Profiles.Count;
-            GroupItems[GroupItems.IndexOf(unassigned)] = unassigned;
+            MessageBox.Show("Select at least one group (Unassigned cannot be deleted).", "Notice", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
         }
-        else
+
+        if (MessageBox.Show($"Delete {targets.Count} group(s)? Profiles will be unassigned.", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
         {
-            GroupItems.Add(new GroupItem { Name = "Unassigned", ProfilesCount = Profiles.Count });
+            return;
+        }
+
+        foreach (var g in targets)
+        {
+            await groupRepository.DeleteAsync(g.Id);
+            await UnassignProfilesInGroupAsync(g.Name);
+        }
+
+        await LoadGroupsAsync();
+        await LoadProfilesAsync();
+    }
+
+    [RelayCommand]
+    private Task RefreshGroupsAsync()
+    {
+        GroupsView.Refresh();
+        return Task.CompletedTask;
+    }
+
+    private async Task LoadGroupsAsync()
+    {
+        var groups = await groupRepository.GetAllAsync();
+
+        GroupItems.Clear();
+        foreach (var g in groups)
+        {
+            GroupItems.Add(new GroupItem
+            {
+                Id = g.Id,
+                Name = g.Name,
+                ProfilesCount = Profiles.Count(p => string.Equals(p.Group, g.Name, StringComparison.OrdinalIgnoreCase))
+            });
+        }
+
+        var unassignedCount = Profiles.Count(p => string.IsNullOrWhiteSpace(p.Group));
+        GroupItems.Add(new GroupItem { Name = "Unassigned", ProfilesCount = unassignedCount });
+        GroupsView.Refresh();
+    }
+
+    private void RefreshGroupCounts()
+    {
+        foreach (var group in GroupItems)
+        {
+            if (group.Name == "Unassigned")
+            {
+                group.ProfilesCount = Profiles.Count(p => string.IsNullOrWhiteSpace(p.Group));
+            }
+            else
+            {
+                group.ProfilesCount = Profiles.Count(p =>
+                    string.Equals(p.Group, group.Name, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+        GroupsView.Refresh();
+    }
+
+    private bool FilterGroup(object obj)
+    {
+        if (obj is not GroupItem g)
+            return false;
+
+        if (string.IsNullOrWhiteSpace(SearchGroupText))
+            return true;
+
+        return g.Name.Contains(SearchGroupText, StringComparison.OrdinalIgnoreCase);
+    }
+
+    partial void OnSearchGroupTextChanged(string value)
+    {
+        GroupsView.Refresh();
+    }
+
+    private async Task UnassignProfilesInGroupAsync(string groupName)
+    {
+        var matches = Profiles.Where(p => string.Equals(p.Group, groupName, StringComparison.OrdinalIgnoreCase)).ToList();
+        foreach (var p in matches)
+        {
+            p.Group = null;
+            await profileRepository.UpdateAsync(p);
         }
     }
 }

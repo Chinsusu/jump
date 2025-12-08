@@ -52,6 +52,7 @@ public partial class App : Application
             options.UseSqlite($"Data Source={dbPath}"));
 
         services.AddScoped<IProfileRepository, ProfileRepository>();
+        services.AddScoped<IGroupRepository, GroupRepository>();
         services.AddSingleton<FingerprintGenerator>();
 
         services.AddTransient<MainViewModel>();

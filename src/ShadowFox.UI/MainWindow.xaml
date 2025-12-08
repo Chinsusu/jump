@@ -205,14 +205,14 @@
                         </StackPanel.Style>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <Button Content="Action" Padding="12,6" Margin="0,0,8,0"/>
-                            <Button Content="New group" Padding="12,6" />
+                            <Button Content="Delete selected" Command="{Binding DeleteSelectedGroupsCommand}" Padding="12,6" Margin="0,0,8,0"/>
+                            <Button Content="New group" Command="{Binding AddGroupCommand}" Padding="12,6" />
                             <TextBox Width="180"
                                      Margin="12,0,0,0"
                                      HorizontalAlignment="Left"
                                      VerticalAlignment="Center"
                                      ToolTip="Search groups"
-                                     Text="" />
+                                     Text="{Binding SearchGroupText, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
 
                         <DataGrid ItemsSource="{Binding GroupItems}"
@@ -222,7 +222,7 @@
                                   RowHeaderWidth="0"
                                   IsReadOnly="True">
                             <DataGrid.Columns>
-                                <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected}" Width="70"/>
+                                <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected, Mode=TwoWay}" Width="70"/>
                                 <DataGridTextColumn Header="Group name" Binding="{Binding Name}" Width="*" />
                                 <DataGridTextColumn Header="Number of profiles" Binding="{Binding ProfilesCount}" Width="150" />
                             </DataGrid.Columns>
