@@ -27,6 +27,11 @@
 - Logging: `ConsoleAutomationLogger`.
 - Mở rộng: thêm WPF/WinForms UI trong `src/JumpTaskAutomation/Frontend`.
 
+## UI (WPF)
+- `src/JumpTaskAutomation.UI/` chứa giao diện sidebar đơn giản với hai tab: Profile Management, Proxy Management.
+- Chạy thử: `dotnet run --project src/JumpTaskAutomation.UI/JumpTaskAutomation.UI.csproj`
+- Hiện tại là layout/stub, cần nối vào backend khi sẵn sàng.
+
 ## Coding Standards
 - C#: .NET 8, nullable enabled.
 - Đặt tên: PascalCase cho class/file; camelCase cho biến/hàm; mỗi file ≤ 500 dòng, tách theo chức năng/object.

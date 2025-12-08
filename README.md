@@ -27,6 +27,11 @@ dotnet run --project src/JumpTaskAutomation/JumpTaskAutomation.csproj
 - `src/JumpTaskAutomation/Backend/NotificationManager.cs` notification hook (currently console only).
 - `src/JumpTaskAutomation/Logging/ConsoleAutomationLogger.cs` simple console logger.
 
+## UI (WPF)
+- A minimal sidebar UI lives in `src/JumpTaskAutomation.UI/`.
+- Run: `dotnet run --project src/JumpTaskAutomation.UI/JumpTaskAutomation.UI.csproj`
+- Tabs: Profile Management, Proxy Management (layout-only stub to be wired to backend).
+
 ## Customization roadmap
 - Map UI coordinates per device and flesh out the review flow (star taps, text input) using `UIAutomatorHelper`.
 - Add persistence beyond NDJSON (SQLite/Firebase) inside `DatabaseManager`.
