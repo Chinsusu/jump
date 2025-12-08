@@ -1,0 +1,18 @@
+# Build outputs
+bin/
+obj/
+
+# User-local / tooling
+.vs/
+
+# Logs and data artifacts
+data/
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# OS
+Thumbs.db
+*.DS_Store
