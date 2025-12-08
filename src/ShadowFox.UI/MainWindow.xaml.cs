@@ -5,9 +5,12 @@ namespace ShadowFox.UI;
 
 public partial class MainWindow : Window
 {
+    public string SelectedNav { get; set; } = "Profile";
+
     public MainWindow()
     {
         InitializeComponent();
+        DataContext = this;
     }
 
     private void DragArea_MouseDown(object sender, MouseButtonEventArgs e)
@@ -30,5 +33,16 @@ public partial class MainWindow : Window
     private void Close_Click(object sender, RoutedEventArgs e)
     {
         Close();
+    }
+
+    private void Nav_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement element && element.Tag is string tag)
+        {
+            SelectedNav = tag;
+            // Refresh DataContext bindings manually since using simple property.
+            DataContext = null;
+            DataContext = this;
+        }
     }
 }
