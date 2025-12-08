@@ -1,0 +1,21 @@
+# Build outputs
+bin/
+obj/
+
+# VS/VSCode
+.vs/
+.vscode/
+
+# User-specific
+*.user
+*.suo
+
+# Logs and temp
+*.log
+*.tmp
+data/
+artifacts/
+
+# NuGet
+*.nupkg
+*.snupkg
