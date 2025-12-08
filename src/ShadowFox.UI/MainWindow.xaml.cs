@@ -35,6 +35,16 @@ public partial class MainWindow : Window
         Close();
     }
 
+    private void AddGroup_Click(object sender, RoutedEventArgs e)
+    {
+        MessageBox.Show("Add group clicked", "Group", MessageBoxButton.OK, MessageBoxImage.Information);
+    }
+
+    private void DeleteGroup_Click(object sender, RoutedEventArgs e)
+    {
+        MessageBox.Show("Delete group clicked", "Group", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
     private void Nav_Click(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement element && element.Tag is string tag)

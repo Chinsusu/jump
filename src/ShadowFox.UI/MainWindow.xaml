@@ -133,8 +133,30 @@
 
                         <!-- Content area -->
                         <Border Grid.Column="1" Background="#161C2C" CornerRadius="12" BorderBrush="#1F2937" BorderThickness="1" Padding="24">
-                            <TextBlock Text="{Binding SelectedNav, RelativeSource={RelativeSource AncestorType=Window}, StringFormat='Selected: {0}'}"
-                                       Foreground="#E5E7EB" FontSize="16"/>
+                            <StackPanel>
+                                <TextBlock Text="{Binding SelectedNav, RelativeSource={RelativeSource AncestorType=Window}, StringFormat='Selected: {0}'}"
+                                           Foreground="#E5E7EB" FontSize="16" Margin="0,0,0,12"/>
+
+                                <StackPanel x:Name="GroupActions" Orientation="Horizontal" Margin="0,0,0,0">
+                                    <StackPanel.Style>
+                                        <Style TargetType="StackPanel">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SelectedNav, RelativeSource={RelativeSource AncestorType=Window}}" Value="Group">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </StackPanel.Style>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0">
+                                        <Button Content="Add group" Click="AddGroup_Click" Padding="12,6" Margin="0,0,8,0"
+                                                Background="#1F2A44" Foreground="#F8FAFC" BorderThickness="0"/>
+                                        <Button Content="Delete group" Click="DeleteGroup_Click" Padding="12,6"
+                                                Background="#FEE2E2" Foreground="#991B1B" BorderBrush="#FCA5A5" BorderThickness="1"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </Border>
                     </Grid>
                 </Grid>
