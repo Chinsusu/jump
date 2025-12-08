@@ -14,7 +14,8 @@
     <Window.Resources>
         <conv:UaConverter x:Key="UaConverter" />
 
-        <Style x:Key="NavButton" TargetType="Button">
+        <!-- Navigation buttons -->
+        <Style x:Key="NavPrimaryButton" TargetType="Button">
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Padding" Value="14,10"/>
             <Setter Property="Margin" Value="0,6,0,0"/>
@@ -27,14 +28,14 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}" CornerRadius="8">
-                            <ContentPresenter VerticalAlignment="Center" Margin="8,0,0,0"/>
+                            <ContentPresenter VerticalAlignment="Center" Margin="6,0,0,0"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="SubNavButton" TargetType="Button">
+        <Style x:Key="NavSubButton" TargetType="Button">
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Padding" Value="12,6"/>
             <Setter Property="Margin" Value="12,4,0,0"/>
@@ -45,7 +46,7 @@
             <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
-        <Style x:Key="SubNavButtonAll" TargetType="Button" BasedOn="{StaticResource SubNavButton}">
+        <Style x:Key="SubAllStyle" TargetType="Button" BasedOn="{StaticResource NavSubButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.AllProfiles}">
                     <Setter Property="Foreground" Value="White"/>
@@ -53,8 +54,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-
-        <Style x:Key="SubNavButtonGroups" TargetType="Button" BasedOn="{StaticResource SubNavButton}">
+        <Style x:Key="SubGroupsStyle" TargetType="Button" BasedOn="{StaticResource NavSubButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Groups}">
                     <Setter Property="Foreground" Value="White"/>
@@ -62,8 +62,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-
-        <Style x:Key="SubNavButtonUnassigned" TargetType="Button" BasedOn="{StaticResource SubNavButton}">
+        <Style x:Key="SubUnassignedStyle" TargetType="Button" BasedOn="{StaticResource NavSubButton}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding SelectedProfileSubTab}" Value="{x:Static models:ProfileSubTab.Unassigned}">
                     <Setter Property="Foreground" Value="White"/>
@@ -91,7 +90,7 @@
 
                 <Button Command="{Binding SelectProfileTabCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource NavPrimaryButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProfileManagement}">
                                     <Setter Property="Background" Value="#2E3A5D"/>
@@ -100,27 +99,26 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE77B;" Margin="0,0,10,0" FontSize="16"/>
-                            <TextBlock Text="Profile Management"/>
-                        </StackPanel>
-                    </Button.Content>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE77B;" Margin="0,0,10,0" FontSize="16"/>
+                        <TextBlock Text="Profile Management"/>
+                    </StackPanel>
                 </Button>
                 <StackPanel>
                     <Button Content="All Profiles"
-                            Style="{StaticResource SubNavButtonAll}"
+                            Style="{StaticResource SubAllStyle}"
                             Command="{Binding SelectAllProfilesSubTabCommand}" />
                     <Button Content="Groups"
-                            Style="{StaticResource SubNavButtonGroups}"
+                            Style="{StaticResource SubGroupsStyle}"
                             Command="{Binding SelectGroupsSubTabCommand}" />
                     <Button Content="Unassigned"
-                            Style="{StaticResource SubNavButtonUnassigned}"
+                            Style="{StaticResource SubUnassignedStyle}"
                             Command="{Binding SelectUnassignedSubTabCommand}" />
                 </StackPanel>
+
                 <Button Command="{Binding SelectProxyTabCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource NavPrimaryButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ProxyManagement}">
                                     <Setter Property="Background" Value="#2E3A5D"/>
@@ -129,16 +127,15 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE774;" Margin="0,0,10,0" FontSize="16"/>
-                            <TextBlock Text="Proxy Management"/>
-                        </StackPanel>
-                    </Button.Content>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE774;" Margin="0,0,10,0" FontSize="16"/>
+                        <TextBlock Text="Proxy Management"/>
+                    </StackPanel>
                 </Button>
+
                 <Button Command="{Binding SelectShopTabCommand}">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource NavButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource NavPrimaryButton}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding SelectedTab}" Value="{x:Static models:NavigationTab.ShopProxy}">
                                     <Setter Property="Background" Value="#2E3A5D"/>
@@ -147,32 +144,32 @@
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE7BF;" Margin="0,0,10,0" FontSize="16"/>
-                            <TextBlock Text="Proxy Shop"/>
-                        </StackPanel>
-                    </Button.Content>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontFamily="{StaticResource FluentIconFont}" Text="&#xE7BF;" Margin="0,0,10,0" FontSize="16"/>
+                        <TextBlock Text="Proxy Shop"/>
+                    </StackPanel>
                 </Button>
             </StackPanel>
         </Border>
 
-        <!-- Content -->
+        <!-- Main content -->
         <Grid Grid.Column="1" Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Background="{StaticResource BrushCard}" Padding="12" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1">
+            <!-- Header -->
+            <Border Background="{StaticResource AccentGradient}" Padding="12" CornerRadius="12">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="Profile Management" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource BrushTextPrimary}"/>
-                    <TextBlock Text="{Binding SelectedTab, StringFormat='| {0}'}" FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="6,4,0,0"/>
-                    <TextBlock Text="{Binding SelectedProfileSubTab, StringFormat='· {0}'}" FontSize="12" Foreground="{StaticResource BrushTextSecondary}" Margin="6,4,0,0"/>
+                    <TextBlock Text="Profile Management" FontSize="18" FontWeight="SemiBold" Foreground="White"/>
+                    <TextBlock Text="{Binding SelectedTab, StringFormat='  |  {0}'}" FontSize="12" Foreground="#E5E7EB" Margin="8,4,0,0"/>
+                    <TextBlock Text="{Binding SelectedProfileSubTab, StringFormat='  ·  {0}'}" FontSize="12" Foreground="#E5E7EB" Margin="8,4,0,0"/>
                 </StackPanel>
             </Border>
 
-            <Border Grid.Row="1" Background="{StaticResource BrushCard}" Margin="0,10,0,0" Padding="16" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
+            <!-- Content card -->
+            <Border Grid.Row="1" Background="{StaticResource BrushCard}" Margin="0,12,0,0" Padding="16" CornerRadius="12" BorderBrush="#E5E7EB" BorderThickness="1">
                 <Grid>
                     <!-- All Profiles -->
                     <StackPanel>
@@ -192,9 +189,9 @@
                         </StackPanel.Style>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <Button Content="New Profile" Command="{Binding CreateProfileCommand}" Padding="12,6" Background="{StaticResource AccentGradient}" Foreground="White" BorderThickness="0"/>
-                            <Button Content="Edit" Command="{Binding EditProfileCommand}" Padding="12,6" BorderBrush="#E5E7EB" BorderThickness="1" Background="White" />
-                            <Button Content="Delete" Command="{Binding DeleteProfileCommand}" Padding="12,6" Background="#FEE2E2" BorderBrush="#FCA5A5" BorderThickness="1" Foreground="#991B1B"/>
+                            <Button Content="New Profile" Command="{Binding CreateProfileCommand}" Padding="12,6" Background="{StaticResource AccentGradient}" Foreground="White" BorderThickness="0" Margin="0,0,8,0"/>
+                            <Button Content="Edit" Command="{Binding EditProfileCommand}" Padding="12,6" BorderBrush="#E5E7EB" BorderThickness="1" Background="White" Margin="0,0,8,0"/>
+                            <Button Content="Delete" Command="{Binding DeleteProfileCommand}" Padding="12,6" Background="#FEE2E2" BorderBrush="#FCA5A5" BorderThickness="1" Foreground="#991B1B" Margin="0,0,8,0"/>
                             <Button Content="Refresh" Command="{Binding LoadProfilesCommand}" Padding="12,6" BorderBrush="#E5E7EB" BorderThickness="1" Background="White"/>
                         </StackPanel>
 
@@ -233,8 +230,8 @@
                         </StackPanel.Style>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
-                            <Button Content="Delete selected" Command="{Binding DeleteSelectedGroupsCommand}" Padding="12,6" Background="#FEE2E2" BorderBrush="#FCA5A5" BorderThickness="1" Foreground="#991B1B"/>
-                            <Button Content="New group" Command="{Binding AddGroupCommand}" Padding="12,6" Background="{StaticResource AccentGradient}" Foreground="White" BorderThickness="0"/>
+                            <Button Content="Delete selected" Command="{Binding DeleteSelectedGroupsCommand}" Padding="12,6" Background="#FEE2E2" BorderBrush="#FCA5A5" BorderThickness="1" Foreground="#991B1B" Margin="0,0,8,0"/>
+                            <Button Content="New group" Command="{Binding AddGroupCommand}" Padding="12,6" Background="{StaticResource AccentGradient}" Foreground="White" BorderThickness="0" Margin="0,0,8,0"/>
                             <TextBox Width="220"
                                      Margin="12,0,0,0"
                                      HorizontalAlignment="Left"
