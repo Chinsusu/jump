@@ -165,21 +165,23 @@
                                       HeadersVisibility="Column"
                                       CanUserAddRows="False"
                                       CanUserDeleteRows="False"
-                                      Margin="4,0,0,12">
+                                      Margin="4,0,0,12"
+                                      RowHeaderWidth="0"
+                                      SelectionUnit="FullRow">
                                 <DataGrid.Columns>
-                                    <DataGridTemplateColumn Header="" Width="50">
+                                    <DataGridTemplateColumn Header="" Width="60">
                                         <DataGridTemplateColumn.HeaderTemplate>
                                             <DataTemplate>
                                                 <CheckBox HorizontalAlignment="Center"
                                                           VerticalAlignment="Center"
-                                                          Click="SelectAllProfiles_Click"/>
+                                                          Click="SelectAllProfiles_Click"
+                                                          Style="{StaticResource DataGridCheckBoxStyle}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.HeaderTemplate>
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                          HorizontalAlignment="Center"
-                                                          VerticalAlignment="Center"/>
+                                                          Style="{StaticResource DataGridCheckBoxStyle}"/>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>
@@ -437,7 +439,8 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                     <CheckBox VerticalAlignment="Center"
                                               Margin="0,0,8,0"
-                                              Click="SelectAllPage_Click"/>
+                                              Click="SelectAllPage_Click"
+                                              Style="{StaticResource DataGridCheckBoxStyle}"/>
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="Prev" Padding="8,4" Click="PrevPage_Click" Margin="0,0,6,0"/>
                                         <TextBlock VerticalAlignment="Center" Text="{Binding CurrentPage, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,4,0"/>
