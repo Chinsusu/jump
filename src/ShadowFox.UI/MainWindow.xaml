@@ -201,23 +201,25 @@
                                                 </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
                         </Grid>
 
-<controls:CreateProfileControl Grid.Row="1">
-    <controls:CreateProfileControl.Style>
-        <Style TargetType="controls:CreateProfileControl">
-            <Setter Property="Visibility" Value="Collapsed"/>
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsCreatingProfile, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
-                    <Setter Property="Visibility" Value="Visible"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </controls:CreateProfileControl.Style>
-</controls:CreateProfileControl>
+                        <controls:CreateProfileControl Grid.Row="1">
+                            <controls:CreateProfileControl.Style>
+                                <Style TargetType="controls:CreateProfileControl">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCreatingProfile, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </controls:CreateProfileControl.Style>
+                        </controls:CreateProfileControl>
+                    </Grid>
+
                     <Grid x:Name="GroupView" Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>

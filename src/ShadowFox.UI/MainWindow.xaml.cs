@@ -655,13 +655,13 @@ public partial class MainWindow : Window
         IsCreatingProfile = true;
     }
 
-    private void CancelCreateProfile_Click(object sender, RoutedEventArgs e)
+    public void CancelCreateProfile_Click(object sender, RoutedEventArgs e)
     {
         IsCreatingProfile = false;
         RefreshFilteredProfiles();
     }
 
-    private void RandomizeFingerprint_Click(object sender, RoutedEventArgs e)
+    public void RandomizeFingerprint_Click(object sender, RoutedEventArgs e)
     {
         var rand = new Random();
         var resolutions = new[] { "1920x1080", "1366x768", "1440x900", "1600x900", "2560x1440" };
@@ -1162,7 +1162,7 @@ public partial class MainWindow : Window
         SaveData();
     }
 
-    private void CreateProfile_Click(object sender, RoutedEventArgs e)
+    public void CreateProfile_Click(object sender, RoutedEventArgs e)
     {
         AddProfileFromForm();
         IsCreatingProfile = false;
@@ -1190,7 +1190,7 @@ public partial class MainWindow : Window
         UpdateAvailableProxies();
     }
 
-    private void OsRadio_Checked(object sender, RoutedEventArgs e)
+    public void OsRadio_Checked(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement fe && fe.Tag is string os)
         {
