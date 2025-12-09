@@ -2,165 +2,638 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:conv="clr-namespace:ShadowFox.UI.Converters"
-        Title="ShadowFox - Base Theme"
-        Width="960"
-        Height="600"
+        Title="ShadowFox"
+        Width="1100"
+        Height="720"
+        WindowStartupLocation="CenterScreen"
         WindowStyle="None"
-        AllowsTransparency="True"
-        Background="Transparent"
-        ResizeMode="CanResizeWithGrip">
+        ResizeMode="CanResize"
+        Background="#F8F8F8">
     <Window.Resources>
-        <conv:NavSelectedConverter x:Key="NavSelectedConverter"/>
+        <conv:NullToBoolConverter x:Key="NullToBoolConverter"/>
+        <conv:StringEqualsConverter x:Key="StringEqualsConverter"/>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <conv:StatusToActionConverter x:Key="StatusToActionConverter"/>
+        <conv:ProxyHostPortConverter x:Key="ProxyHostPortConverter"/>
 
         <Style x:Key="TitleButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="32"/>
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Width" Value="32"/>
-            <Setter Property="Height" Value="24"/>
-            <Setter Property="Margin" Value="4,0,0,0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Foreground" Value="#A9B1C1"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1F2937"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="NavItemButton" TargetType="Button">
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="12,10"/>
-            <Setter Property="Margin" Value="0,8,0,0"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#D1D5DB"/>
-            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Pill" Background="{TemplateBinding Background}" CornerRadius="12" Padding="12,8">
-                            <ContentPresenter VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1E2639"/>
-                    <Setter Property="Foreground" Value="#F8FAFC"/>
+                    <Setter Property="Background" Value="#E5E7EB"/>
                 </Trigger>
-                <DataTrigger Value="True">
-                    <DataTrigger.Binding>
-                        <MultiBinding Converter="{StaticResource NavSelectedConverter}">
-                            <Binding Path="SelectedNav" RelativeSource="{RelativeSource AncestorType=Window}"/>
-                            <Binding Path="Tag" RelativeSource="{RelativeSource Self}"/>
-                        </MultiBinding>
-                    </DataTrigger.Binding>
-                    <Setter Property="Background" Value="#1F2A44"/>
-                    <Setter Property="Foreground" Value="#F8FAFC"/>
-                </DataTrigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#D1D5DB"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
+
     <Grid>
-        <Border Background="#0F1425" CornerRadius="14" BorderBrush="#1E2636" BorderThickness="1">
-            <Border.Effect>
-                <DropShadowEffect Color="#000000" BlurRadius="20" ShadowDepth="0" Opacity="0.35"/>
-            </Border.Effect>
-            <Grid>
-                <Grid.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                        <GradientStop Color="#1B1E36" Offset="0"/>
-                        <GradientStop Color="#0F172A" Offset="1"/>
-                    </LinearGradientBrush>
-                </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="44"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <!-- Title bar -->
+        <Border Grid.Row="0" Background="#F8F8F8" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1" MouseDown="TitleBar_OnMouseDown">
+            <Grid Margin="12,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                    <Rectangle Width="20" Height="6">
+                        <Rectangle.Fill>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#00ADEF" Offset="0"/>
+                                <GradientStop Color="#0072CE" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <TextBlock Text="ShadowFox" FontSize="14" FontWeight="SemiBold" Foreground="#111827" VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,0">
+                    <Button Style="{StaticResource TitleButtonStyle}" Content="&#xE921;" Click="Minimize_Click"/>
+                    <Button Style="{StaticResource TitleButtonStyle}" Content="&#xE922;" Click="Maximize_Click"/>
+                    <Button Style="{StaticResource TitleButtonStyle}" Content="&#xE8BB;" Click="Close_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Body -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="240"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Navigation -->
+            <Border Background="#F8F8F8" BorderThickness="0" Padding="16" >
+                <StackPanel>
+                    <Button Content="&#xE700;" FontFamily="Segoe MDL2 Assets" Width="32" Height="32" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left"/>
+                    <TextBox Width="200" Height="32" Margin="0,12,0,16" Padding="8,4"
+                             Text="{Binding SearchText, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             Background="White"
+                             BorderBrush="#E5E7EB"
+                             BorderThickness="1"/>
+                    <ListBox x:Name="NavList"
+                             BorderThickness="0"
+                             SelectionChanged="NavList_SelectionChanged">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="8"/>
+                                <Setter Property="FontSize" Value="14"/>
+                                <Setter Property="Foreground" Value="#111827"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Left"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#E5F1FB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBoxItem Content="Home" Tag="Profile"/>
+                        <ListBoxItem Content="Group" Tag="Group"/>
+                        <ListBoxItem Content="Proxy" Tag="Proxy"/>
+                    </ListBox>
+                </StackPanel>
+            </Border>
+
+            <!-- Content -->
+            <Border Grid.Column="1" Background="White" Padding="16" BorderBrush="#E5E7EB" BorderThickness="1">
                 <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="40"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <!-- Title bar -->
-                    <Grid Grid.Row="0" Background="#0F172A" Opacity="0.9">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid x:Name="ProfileView">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Profile Management" FontSize="16" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,10"/>
 
-                        <Rectangle Fill="#00000000"
-                                   MouseDown="DragArea_MouseDown"/>
+                        <!-- Profile list -->
+                        <Grid x:Name="ProfileListGrid" Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCreatingProfile, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
 
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,8,0">
-                            <Button Style="{StaticResource TitleButtonStyle}" Click="Minimize_Click" Content="&#xE949;" />
-                            <Button Style="{StaticResource TitleButtonStyle}" Click="Maximize_Click" Content="&#xE739;" />
-                            <Button Style="{StaticResource TitleButtonStyle}" Click="Close_Click" Content="&#xE10A;" />
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,0,10">
+                                <TextBox Width="200"
+                                         Height="32"
+                                         Margin="0,0,10,0"
+                                         Padding="8,4"
+                                         Text="{Binding SearchText, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         ToolTip="Search profiles"/>
+                                <Button Content="New profile" Padding="12,6" Click="NewProfile_Click"/>
+                                <Button Content="Delete selected" Padding="12,6" Margin="10,0,0,0" Click="BulkDeleteProfiles_Click"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="4,0,0,6" VerticalAlignment="Center">
+                                <Button Content="Prev" Padding="8,4" Click="PrevProfilePage_Click" Margin="0,0,6,0"/>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding ProfileCurrentPage, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,4,0"/>
+                                <TextBlock VerticalAlignment="Center" Text="/" Margin="0,0,4,0"/>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding ProfileTotalPages, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                <Button Content="Next" Padding="8,4" Click="NextProfilePage_Click" Margin="6,0,0,0"/>
+                            </StackPanel>
+
+                            <DataGrid Grid.Row="2"
+                                      ItemsSource="{Binding PagedProfiles, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      AutoGenerateColumns="False"
+                                      HeadersVisibility="Column"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      Margin="4,0,0,12">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="50">
+                                        <DataGridTemplateColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <CheckBox HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Click="SelectAllProfiles_Click"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.HeaderTemplate>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" MinWidth="220"/>
+                                    <DataGridTextColumn Header="Proxy" Binding="{Binding Proxy}" Width="150"/>
+                                    <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="120"/>
+                                    <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="120"/>
+                                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120"/>
+                                    <DataGridTextColumn Header="Browser Vers." Binding="{Binding BrowserVersion}" Width="120"/>
+                                    <DataGridTextColumn Header="Last edited" Binding="{Binding LastEdited}" Width="140"/>
+                                    <DataGridTemplateColumn Header="Action" Width="160">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Button Content="Edit" Padding="8,4" Margin="0,0,6,0" Tag="{Binding Name}" Click="EditProfileRow_Click"/>
+                                                    <Button Content="Delete" Padding="8,4" Tag="{Binding Name}" Click="DeleteProfileRow_Click"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+
+                        <!-- Profile creation form -->
+                        <Grid x:Name="ProfileFormGrid" Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCreatingProfile, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+
+                            <StackPanel Grid.Column="0" Visibility="{Binding IsCreatingProfile, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource NullToBoolConverter}}">
+                                <TextBlock Text="Create Profile" FontSize="15" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,6"/>
+
+                                <StackPanel>
+                                    <TextBlock Text="Browser profile name" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                    <TextBox Text="{Binding NewProfileName, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Height="32" Padding="8,4"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0" VerticalAlignment="Center">
+                                    <StackPanel Width="240">
+                                        <TextBlock Text="Group" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                        <ComboBox ItemsSource="{Binding Groups, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedItem="{Binding SelectedProfileGroup, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
+                                                  Height="32"/>
+                                    </StackPanel>
+                                    <TextBox x:Name="ProfileNewGroupBox"
+                                             Width="160"
+                                             Height="32"
+                                             Margin="10,20,6,0"
+                                             Padding="8,4"
+                                             ToolTip="New group name"/>
+                                    <Button Content="Add group"
+                                            Click="AddGroupFromProfile_Click"
+                                            Padding="10,6"
+                                            Margin="0,20,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Margin="0,12,0,0">
+                                    <TextBlock Text="Operating system" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                        <RadioButton Content="Windows"
+                                                     GroupName="OsSelect"
+                                                     Tag="Windows"
+                                                     IsChecked="{Binding SelectedOs, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Windows}"
+                                                     Checked="OsRadio_Checked"
+                                                     Margin="0,0,12,0"/>
+                                        <RadioButton Content="Mac OS"
+                                                     GroupName="OsSelect"
+                                                     Tag="Mac OS"
+                                                     IsChecked="{Binding SelectedOs, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Mac OS}"
+                                                     Checked="OsRadio_Checked"
+                                                     Margin="0,0,12,0"/>
+                                        <RadioButton Content="Linux"
+                                                     GroupName="OsSelect"
+                                                     Tag="Linux"
+                                                     IsChecked="{Binding SelectedOs, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringEqualsConverter}, ConverterParameter=Linux}"
+                                                     Checked="OsRadio_Checked"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                    <StackPanel Width="240">
+                                        <TextBlock Text="Browser version" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                        <ComboBox ItemsSource="{Binding BrowserVersions, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  SelectedItem="{Binding SelectedBrowserVersion, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
+                                                  Height="32"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                    <Button Content="Randomize fingerprint"
+                                            Click="RandomizeFingerprint_Click"
+                                            Padding="12,6"
+                                            Margin="0,0,8,0"/>
+                                    <Button Content="Add proxy"
+                                            Click="AddProxy_Click"
+                                            Padding="12,6"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                                    <Button Content="Cancel"
+                                            Padding="12,6"
+                                            Margin="0,0,8,0"
+                                            Click="CancelCreateProfile_Click"/>
+                                    <Button Content="Create profile"
+                                            Click="CreateProfile_Click"
+                                            Padding="12,6"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Border Grid.Column="1" Background="#FFFFFF" CornerRadius="10" Padding="12" Margin="14,0,0,0" BorderBrush="#E5E7EB" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="PROFILE SUMMARY" Foreground="#4B5563" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                    <StackPanel>
+                                        <TextBlock Foreground="#4B5563" Text="Profile name"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding NewProfileName, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="Group"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SelectedProfileGroup.Name, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="OS"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SelectedOs, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="User agent"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SummaryUserAgent, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="Resolution"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SummaryResolution, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="Languages"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SummaryLanguages, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="Timezone"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SummaryTimezone, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                    <StackPanel Margin="0,6,0,0">
+                                        <TextBlock Foreground="#4B5563" Text="WebRTC"/>
+                                        <TextBlock Foreground="#111827" Text="{Binding SummaryWebRtc, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Grid>
+
+                    <Grid x:Name="GroupView" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Group Management" FontSize="16" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,10"/>
+
+                        <StackPanel Grid.Row="1">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <TextBox x:Name="GroupNameBox"
+                                         Width="220"
+                                         Height="32"
+                                         Padding="8,4"
+                                         ToolTip="Group name"/>
+                                <Button Content="Add group" Click="AddGroup_Click" Padding="12,6" Margin="8,0,8,0"/>
+                                <Button Content="Delete group"
+                                        Click="DeleteGroup_Click"
+                                        Padding="12,6"
+                                        IsEnabled="{Binding SelectedGroup, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource NullToBoolConverter}}"/>
+                            </StackPanel>
+
+                            <ListBox ItemsSource="{Binding Groups, RelativeSource={RelativeSource AncestorType=Window}}"
+                                     SelectedItem="{Binding SelectedGroup, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
+                                     MinHeight="280">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="120"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding ProfileCount, StringFormat='Profiles: {0}'}"
+                                                       Foreground="#4B5563"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
                         </StackPanel>
                     </Grid>
 
-                    <!-- Content -->
-                    <Grid Grid.Row="1" Margin="16">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="220"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                    <Grid x:Name="ProxyView" Visibility="Collapsed">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                        <!-- Sidebar navigation -->
-                        <Border Grid.Column="0" Background="#11182C" Opacity="0.95" Padding="16" CornerRadius="12" BorderBrush="#1F2A3D" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Navigation" FontSize="14" FontWeight="SemiBold" Foreground="#E5E7EB" Margin="0,0,0,8"/>
-                                <Button Tag="Profile" Style="{StaticResource NavItemButton}" Click="Nav_Click">
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE77B;" Margin="0,0,10,0" FontSize="16"/>
-                                        <TextBlock Text="Profile"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Tag="Group" Style="{StaticResource NavItemButton}" Click="Nav_Click">
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE902;" Margin="0,0,10,0" FontSize="16"/>
-                                        <TextBlock Text="Group"/>
-                                    </StackPanel>
-                                </Button>
-                                <Button Tag="Proxy" Style="{StaticResource NavItemButton}" Click="Nav_Click">
-                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE774;" Margin="0,0,10,0" FontSize="16"/>
-                                        <TextBlock Text="Proxy"/>
-                                    </StackPanel>
-                                </Button>
-                            </StackPanel>
-                        </Border>
+                        <TextBlock Text="Proxy Management" FontSize="16" FontWeight="SemiBold" Foreground="#111827" Margin="0,0,0,10"/>
 
-                        <!-- Content area -->
-                        <Border Grid.Column="1" Background="#161C2C" CornerRadius="12" BorderBrush="#1F2937" BorderThickness="1" Padding="24">
-                            <StackPanel>
-                                <TextBlock Text="{Binding SelectedNav, RelativeSource={RelativeSource AncestorType=Window}, StringFormat='Selected: {0}'}"
-                                           Foreground="#E5E7EB" FontSize="16" Margin="0,0,0,12"/>
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
 
-                                <StackPanel x:Name="GroupActions" Orientation="Horizontal" Margin="0,0,0,0">
-                                    <StackPanel.Style>
-                                        <Style TargetType="StackPanel">
-                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SelectedNav, RelativeSource={RelativeSource AncestorType=Window}}" Value="Group">
-                                                    <Setter Property="Visibility" Value="Visible"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </StackPanel.Style>
+                            <!-- Proxy list -->
+                            <Grid x:Name="ProxyListGrid">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCreatingProxy, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
 
-                                    <StackPanel Orientation="Horizontal" Margin="0">
-                                        <Button Content="Add group" Click="AddGroup_Click" Padding="12,6" Margin="0,0,8,0"
-                                                Background="#1F2A44" Foreground="#F8FAFC" BorderThickness="0"/>
-                                        <Button Content="Delete group" Click="DeleteGroup_Click" Padding="12,6"
-                                                Background="#FEE2E2" Foreground="#991B1B" BorderBrush="#FCA5A5" BorderThickness="1"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,10" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <TextBox Width="180"
+                                             Height="32"
+                                             Padding="8,4"
+                                             Margin="0,0,8,0"
+                                             Text="{Binding ProxySearchText, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Search proxies"/>
+                                    <Button Content="Delete selected"
+                                            Padding="12,6"
+                                            Margin="0,0,8,0"
+                                            Click="BulkDelete_Click"/>
+                                    <Button Content="Add proxy"
+                                            Padding="12,6"
+                                            Click="AddProxyItem_Click"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <CheckBox VerticalAlignment="Center"
+                                              Margin="0,0,8,0"
+                                              Click="SelectAllPage_Click"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Prev" Padding="8,4" Click="PrevPage_Click" Margin="0,0,6,0"/>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding CurrentPage, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,4,0"/>
+                                        <TextBlock VerticalAlignment="Center" Text="/" Margin="0,0,4,0"/>
+                                        <TextBlock VerticalAlignment="Center" Text="{Binding TotalPages, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                        <Button Content="Next" Padding="8,4" Click="NextPage_Click" Margin="6,0,0,0"/>
                                     </StackPanel>
                                 </StackPanel>
-                            </StackPanel>
-                        </Border>
+
+                                <DataGrid Grid.Row="1"
+                                          ItemsSource="{Binding PagedProxies, RelativeSource={RelativeSource AncestorType=Window}}"
+                                          AutoGenerateColumns="False"
+                                          HeadersVisibility="Column"
+                                          CanUserAddRows="False"
+                                          CanUserDeleteRows="False"
+                                          SelectionMode="Extended"
+                                          SelectionUnit="FullRow">
+                                    <DataGrid.Columns>
+                                        <DataGridCheckBoxColumn Header="" Width="40" IsReadOnly="False" Binding="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                            <DataGridCheckBoxColumn.ElementStyle>
+                                                <Style TargetType="CheckBox">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridCheckBoxColumn.ElementStyle>
+                                            <DataGridCheckBoxColumn.EditingElementStyle>
+                                                <Style TargetType="CheckBox">
+                                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                                </Style>
+                                            </DataGridCheckBoxColumn.EditingElementStyle>
+                                        </DataGridCheckBoxColumn>
+                                        <DataGridTextColumn Header="Proxy" Binding="{Binding Address, Converter={StaticResource ProxyHostPortConverter}}" Width="260"/>
+                                        <DataGridTemplateColumn Header="Status" Width="80">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="Transparent" Padding="4,2">
+                                                        <TextBlock Text="{Binding Status}" FontWeight="SemiBold">
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Foreground" Value="#16A34A"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding Status}" Value="dead">
+                                                                            <Setter Property="Foreground" Value="#DC2626"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="IP" Binding="{Binding Ip}" Width="120"/>
+                                        <DataGridTextColumn Header="ISP" Binding="{Binding Isp}" Width="140"/>
+                                        <DataGridTextColumn Header="Country" Binding="{Binding Country}" Width="100"/>
+                                        <DataGridTextColumn Header="Number of profiles" Binding="{Binding ProfileCount}" Width="140"/>
+                                        <DataGridTextColumn Header="Group name" Binding="{Binding Group}" Width="140"/>
+                                        <DataGridTextColumn Header="Tags" Binding="{Binding Tags}" Width="140"/>
+                                        <DataGridTemplateColumn Header="Action" Width="220">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                        <Button Content="Check"
+                                                                Padding="8,4"
+                                                                Margin="0,0,6,0"
+                                                                Tag="{Binding Address}"
+                                                                Click="CheckProxyRow_Click"/>
+                                                        <Button Content="Edit"
+                                                                Padding="8,4"
+                                                                Margin="0,0,6,0"
+                                                                Tag="{Binding Address}"
+                                                                Click="EditProxyRow_Click"/>
+                                                        <Button Content="Delete"
+                                                                Padding="8,4"
+                                                                Tag="{Binding Address}"
+                                                                Click="DeleteProxyRow_Click"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+
+                            <!-- Proxy create form -->
+                            <Grid x:Name="ProxyFormGrid">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCreatingProxy, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <StackPanel>
+                                    <TextBlock Text="Quick input" Margin="0,0,0,4" Foreground="#4B5563"/>
+                                    <TextBox Height="32"
+                                             Padding="8,4"
+                                             Text="{Binding QuickProxyInput, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Paste proxy as host:port:user:pass or user:pass@host:port"/>
+                                    <TextBlock Text="You can paste the proxy as url:port:username:password to auto fill the fields."
+                                               Foreground="#6B7280"
+                                               FontSize="12"
+                                               Margin="0,2,0,12"/>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock Text="Connection type" Foreground="#4B5563" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                        <UniformGrid Columns="2" Rows="1" Width="180">
+                                            <RadioButton Content="HTTP"
+                                                         GroupName="ProxyType"
+                                                         IsChecked="{Binding ProxyConnectionType, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringEqualsConverter}, ConverterParameter=HTTP}"
+                                                         Checked="OsRadio_Checked"/>
+                                            <RadioButton Content="SOCKS5"
+                                                         GroupName="ProxyType"
+                                                         IsChecked="{Binding ProxyConnectionType, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource StringEqualsConverter}, ConverterParameter=SOCKS5}"
+                                                         Checked="OsRadio_Checked"/>
+                                        </UniformGrid>
+                                    </StackPanel>
+
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Host" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                            <TextBox Height="32"
+                                                     Padding="8,4"
+                                                     Text="{Binding ProxyHost, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Port" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                            <TextBox Height="32"
+                                                     Padding="8,4"
+                                                     Text="{Binding ProxyPort, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="12"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Login" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                            <TextBox Height="32" Padding="8,4"
+                                                     Text="{Binding ProxyUsername, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Password" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                            <TextBox Height="32" Padding="8,4"
+                                                     Text="{Binding ProxyPassword, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                                        <Button Content="Check proxy"
+                                                Padding="12,6"
+                                                Click="CheckProxy_Click"
+                                                Margin="0,0,12,0"/>
+                                        <Button Content="Cancel"
+                                                Padding="12,6"
+                                                Click="CancelProxy_Click"
+                                                Margin="0,0,12,0"/>
+                                        <Button Content="Add proxy"
+                                                Padding="12,6"
+                                                Click="AcceptProxy_Click"/>
+                                    </StackPanel>
+
+                                    <TextBlock Text="{Binding ProxyCheckInfo, RelativeSource={RelativeSource AncestorType=Window}}"
+                                               Foreground="#2563EB"
+                                               Margin="0,8,0,0"/>
+
+                                    <TextBlock Text="Bulk add" FontWeight="SemiBold" Margin="0,18,0,4"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                        <Button Content="Import file" Padding="10,4" Margin="0,0,8,0" Click="ImportProxyFile_Click"/>
+                                        <Button Content="Add bulk" Padding="10,4" Click="AddBulkProxy_Click"/>
+                                    </StackPanel>
+                                    <TextBox Height="120"
+                                             AcceptsReturn="True"
+                                             VerticalScrollBarVisibility="Auto"
+                                             Text="{Binding BulkProxyInput, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Padding="8,4"
+                                             ToolTip="One proxy per line. Format: host:port:user:pass or user:pass@host:port."/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-        </Border>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

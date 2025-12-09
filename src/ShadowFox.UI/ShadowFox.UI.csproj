@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Wpf.Ui" Version="3.4.2.7" />
+    <ProjectReference Include="..\\..\\external\\wpfui\\src\\Wpf.Ui\\Wpf.Ui.csproj" />
   </ItemGroup>
 
 </Project>
