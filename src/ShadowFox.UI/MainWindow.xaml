@@ -168,6 +168,22 @@
                                       RowHeaderWidth="0"
                                       SelectionUnit="FullRow">
                                 <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="" Width="60">
+                                        <DataGridTemplateColumn.HeaderTemplate>
+                                            <DataTemplate>
+                                                <CheckBox HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center"
+                                                          Click="SelectAllProfiles_Click"
+                                                          Style="{StaticResource DataGridCheckBoxStyle}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.HeaderTemplate>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          Style="{StaticResource DataGridCheckBoxStyle}"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
                                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*" MinWidth="220"/>
                                     <DataGridTextColumn Header="Proxy" Binding="{Binding Proxy}" Width="150"/>
                                     <DataGridTextColumn Header="Group" Binding="{Binding Group}" Width="120"/>
@@ -221,18 +237,19 @@
                                         <ComboBox ItemsSource="{Binding Groups, RelativeSource={RelativeSource AncestorType=Window}}"
                                                   DisplayMemberPath="Name"
                                                   SelectedItem="{Binding SelectedProfileGroup, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
-                                                  Height="32"/>
+                                                  Height="32"
+                                                  Padding="8,4"
+                                                  VerticalContentAlignment="Center"/>
                                     </StackPanel>
-                                    <TextBox x:Name="ProfileNewGroupBox"
-                                             Width="160"
-                                             Height="32"
-                                             Margin="10,20,6,0"
-                                             Padding="8,4"
-                                             ToolTip="New group name"/>
-                                    <Button Content="Add group"
-                                            Click="AddGroupFromProfile_Click"
-                                            Padding="10,6"
-                                            Margin="0,20,0,0"/>
+                                    <StackPanel Width="240" Margin="12,0,0,0">
+                                        <TextBlock Text="Proxy" Foreground="#4B5563" Margin="0,0,0,4"/>
+                                        <ComboBox ItemsSource="{Binding AvailableProxies, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                  DisplayMemberPath="Address"
+                                                  SelectedItem="{Binding SelectedProfileProxy, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
+                                                  Height="32"
+                                                  Padding="8,4"
+                                                  VerticalContentAlignment="Center"/>
+                                    </StackPanel>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,12,0,0">
@@ -263,7 +280,9 @@
                                         <TextBlock Text="Browser version" Foreground="#4B5563" Margin="0,0,0,4"/>
                                         <ComboBox ItemsSource="{Binding BrowserVersions, RelativeSource={RelativeSource AncestorType=Window}}"
                                                   SelectedItem="{Binding SelectedBrowserVersion, RelativeSource={RelativeSource AncestorType=Window}, Mode=TwoWay}"
-                                                  Height="32"/>
+                                                  Height="32"
+                                                  Padding="8,4"
+                                                  VerticalContentAlignment="Center"/>
                                     </StackPanel>
                                 </StackPanel>
 
@@ -272,9 +291,6 @@
                                             Click="RandomizeFingerprint_Click"
                                             Padding="12,6"
                                             Margin="0,0,8,0"/>
-                                    <Button Content="Add proxy"
-                                            Click="AddProxy_Click"
-                                            Padding="12,6"/>
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
@@ -364,6 +380,7 @@
                                                 <ColumnDefinition Width="40"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="140"/>
                                             </Grid.ColumnDefinitions>
                                             <CheckBox IsChecked="{Binding Selected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                       Style="{StaticResource DataGridCheckBoxStyle}"/>
@@ -373,6 +390,10 @@
                                                        Foreground="#4B5563"
                                                        HorizontalAlignment="Right"
                                                        VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Content="Edit" Padding="8,4" Margin="0,0,6,0" Tag="{Binding Name}" Click="EditGroupRow_Click"/>
+                                                <Button Content="Delete" Padding="8,4" Tag="{Binding Name}" Click="DeleteGroupRow_Click"/>
+                                            </StackPanel>
                                         </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>

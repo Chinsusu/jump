@@ -16,18 +16,62 @@ namespace ShadowFox.UI;
 
 public partial class MainWindow : Window
 {
-    public record class GroupItem
+    public class GroupItem : System.ComponentModel.INotifyPropertyChanged
     {
-        public string Name { get; set; }
-        public int ProfileCount { get; set; }
-        public bool Selected { get; set; }
+        private string _name;
+        private int _profileCount;
+        private bool _selected;
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public int ProfileCount
+        {
+            get => _profileCount;
+            set
+            {
+                if (_profileCount != value)
+                {
+                    _profileCount = value;
+                    OnPropertyChanged(nameof(ProfileCount));
+                }
+            }
+        }
+
+        public bool Selected
+        {
+            get => _selected;
+            set
+            {
+                if (_selected != value)
+                {
+                    _selected = value;
+                    OnPropertyChanged(nameof(Selected));
+                }
+            }
+        }
 
         public GroupItem(string name, int profileCount, bool selected = false)
         {
-            Name = name;
-            ProfileCount = profileCount;
-            Selected = selected;
+            _name = name;
+            _profileCount = profileCount;
+            _selected = selected;
         }
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        private void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
     }
     public record class ProfileItem
     {
@@ -39,7 +83,9 @@ public partial class MainWindow : Window
         public string BrowserVersion { get; set; }
         public string LastEdited { get; set; }
 
-        public ProfileItem(string name, string proxy, string group, string tags, string status, string browserVersion, string lastEdited)
+        public bool Selected { get; set; }
+
+        public ProfileItem(string name, string proxy, string group, string tags, string status, string browserVersion, string lastEdited, bool selected = false)
         {
             Name = name;
             Proxy = proxy;
@@ -48,6 +94,7 @@ public partial class MainWindow : Window
             Status = status;
             BrowserVersion = browserVersion;
             LastEdited = lastEdited;
+            Selected = selected;
         }
     }
     public record class ProxyItem
@@ -125,6 +172,9 @@ public partial class MainWindow : Window
     public static readonly DependencyProperty IsCreatingProfileProperty =
         DependencyProperty.Register(nameof(IsCreatingProfile), typeof(bool), typeof(MainWindow),
             new PropertyMetadata(false));
+    public static readonly DependencyProperty SelectedProfileProxyProperty =
+        DependencyProperty.Register(nameof(SelectedProfileProxy), typeof(ProxyItem), typeof(MainWindow),
+            new PropertyMetadata(null));
 
     public GroupItem? SelectedGroup
     {
@@ -136,6 +186,12 @@ public partial class MainWindow : Window
     {
         get => (GroupItem?)GetValue(SelectedProfileGroupProperty);
         set => SetValue(SelectedProfileGroupProperty, value);
+    }
+
+    public ProxyItem? SelectedProfileProxy
+    {
+        get => (ProxyItem?)GetValue(SelectedProfileProxyProperty);
+        set => SetValue(SelectedProfileProxyProperty, value);
     }
 
     public string NewProfileName
@@ -324,6 +380,7 @@ public partial class MainWindow : Window
     public ObservableCollection<ProxyItem> Proxies { get; } = new();
     public ObservableCollection<ProxyItem> FilteredProxies { get; } = new();
     public ObservableCollection<ProxyItem> PagedProxies { get; } = new();
+    public ObservableCollection<ProxyItem> AvailableProxies { get; } = new();
 
     public ObservableCollection<GroupItem> Groups { get; } = new();
     public ObservableCollection<string> BrowserVersions { get; } = new();
@@ -342,12 +399,12 @@ public partial class MainWindow : Window
         DataContext = this;
 
         LoadData();
-        if (!Profiles.Any())
-        {
-            Profiles.Add(new ProfileItem("Cloudmini", "103.183.x.x", "Unassigned", "Starter", "Launched", "139", "2025-09-09"));
-            Profiles.Add(new ProfileItem("georgemercodm@g...", "45.134.x.x", "Unassigned", "Starter", "Ready", "139", "2025-10-09"));
-            Profiles.Add(new ProfileItem("New Profile", "Proxy disabled", "Unassigned", "", "Ready", "139", "2025-10-21"));
-        }
+       if (!Profiles.Any())
+       {
+           Profiles.Add(new ProfileItem("Cloudmini", "103.183.x.x", "Unassigned", "Starter", "Launched", "139", "2025-09-09"));
+           Profiles.Add(new ProfileItem("georgemercodm@g...", "45.134.x.x", "Unassigned", "Starter", "Ready", "139", "2025-10-09"));
+           Profiles.Add(new ProfileItem("New Profile", "Proxy disabled", "Unassigned", "", "Ready", "139", "2025-10-21"));
+       }
 
         if (!Groups.Any())
         {
@@ -371,6 +428,8 @@ public partial class MainWindow : Window
         BulkProxyInput = string.Empty;
         RefreshFilteredProfiles();
         RefreshFilteredProxies();
+        RecalculateGroupCounts();
+        UpdateAvailableProxies();
         UpdateViews("Profile");
     }
 
@@ -537,29 +596,6 @@ public partial class MainWindow : Window
         SaveData();
     }
 
-    private void AddGroupFromProfile_Click(object sender, RoutedEventArgs e)
-    {
-        var name = ProfileNewGroupBox.Text.Trim();
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            System.Windows.MessageBox.Show("Please enter a group name.", "Group", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
-            return;
-        }
-
-        if (Groups.Any(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
-        {
-            SelectedProfileGroup = Groups.First(g => g.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            System.Windows.MessageBox.Show("Group name already exists, selected it.", "Group", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
-            return;
-        }
-
-        var newGroup = new GroupItem(name, 0);
-        Groups.Add(newGroup);
-        SelectedProfileGroup = newGroup;
-        ProfileNewGroupBox.Clear();
-        SaveData();
-    }
-
     private void SelectAllGroups_Click(object sender, RoutedEventArgs e)
     {
         if (sender is System.Windows.Controls.CheckBox cb)
@@ -567,6 +603,33 @@ public partial class MainWindow : Window
             var isChecked = cb.IsChecked == true;
             foreach (var g in Groups)
                 g.Selected = isChecked;
+        }
+    }
+
+    private void EditGroupRow_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.Tag is string name)
+        {
+            var group = Groups.FirstOrDefault(g => g.Name == name);
+            if (group != null)
+            {
+                GroupNameBox.Text = group.Name;
+                SelectedGroup = group;
+            }
+        }
+    }
+
+    private void DeleteGroupRow_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement fe && fe.Tag is string name)
+        {
+            var group = Groups.FirstOrDefault(g => g.Name == name);
+            if (group != null)
+            {
+                Groups.Remove(group);
+                if (SelectedGroup == group) SelectedGroup = null;
+                SaveData();
+            }
         }
     }
 
@@ -715,6 +778,7 @@ public partial class MainWindow : Window
 
         SaveData();
         RefreshFilteredProxies();
+        UpdateAvailableProxies();
         ResetProxyForm();
         _editingProxy = null;
         _isEditingProxy = false;
@@ -777,6 +841,7 @@ public partial class MainWindow : Window
         SaveData();
         RefreshFilteredProxies();
         ProxyCheckInfo = $"Bulk add completed. Added: {added}, Skipped: {skipped}.";
+        UpdateAvailableProxies();
     }
 
     private async Task<(string status, string ip, string isp, string country)> QueryIpInfoAsync(string host, int port, string user, string pass)
@@ -937,6 +1002,7 @@ public partial class MainWindow : Window
                 Proxies.Remove(proxy);
                 SaveData();
                 RefreshFilteredProxies();
+                UpdateAvailableProxies();
             }
         }
     }
@@ -959,6 +1025,17 @@ public partial class MainWindow : Window
         }
     }
 
+    private void SelectAllProfiles_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.CheckBox cb)
+        {
+            var isChecked = cb.IsChecked == true;
+            foreach (var profile in PagedProfiles)
+                profile.Selected = isChecked;
+            UpdateProfilePagination();
+        }
+    }
+
     private void EditProfileRow_Click(object sender, RoutedEventArgs e)
     {
         // placeholder for future edit implementation
@@ -975,6 +1052,8 @@ public partial class MainWindow : Window
                 Profiles.Remove(profile);
                 SaveData();
                 RefreshFilteredProfiles();
+                RecalculateGroupCounts();
+                UpdateAvailableProxies();
             }
         }
     }
@@ -989,6 +1068,7 @@ public partial class MainWindow : Window
 
         SaveData();
         RefreshFilteredProxies();
+        UpdateAvailableProxies();
     }
 
     private void EditProxyRow_Click(object sender, RoutedEventArgs e)
@@ -1078,6 +1158,7 @@ public partial class MainWindow : Window
             Profiles[idx] = updated;
         }
         RefreshFilteredProfiles();
+        RecalculateGroupCounts();
         SaveData();
     }
 
@@ -1086,15 +1167,17 @@ public partial class MainWindow : Window
         AddProfileFromForm();
         IsCreatingProfile = false;
         RefreshFilteredProfiles();
+        RecalculateGroupCounts();
         SaveData();
     }
 
     private void AddProfileFromForm()
     {
         var groupName = SelectedProfileGroup?.Name ?? "Unassigned";
+        var proxyAddress = SelectedProfileProxy?.Address ?? "Proxy disabled";
         var newProfile = new ProfileItem(
             NewProfileName,
-            "Proxy disabled",
+            proxyAddress,
             groupName,
             string.Empty,
             "Ready",
@@ -1103,6 +1186,8 @@ public partial class MainWindow : Window
 
         Profiles.Add(newProfile);
         SaveData();
+        RecalculateGroupCounts();
+        UpdateAvailableProxies();
     }
 
     private void OsRadio_Checked(object sender, RoutedEventArgs e)
@@ -1161,6 +1246,53 @@ public partial class MainWindow : Window
         catch
         {
             Debug.WriteLine("Failed to load data.json");
+        }
+    }
+
+    private void RecalculateGroupCounts()
+    {
+        var selectedName = SelectedGroup?.Name;
+        var counts = Profiles
+            .GroupBy(p => string.IsNullOrWhiteSpace(p.Group) ? "Unassigned" : p.Group, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+
+        // add missing groups referenced by profiles
+        foreach (var kv in counts)
+        {
+            if (!Groups.Any(g => g.Name.Equals(kv.Key, StringComparison.OrdinalIgnoreCase)))
+            {
+                Groups.Add(new GroupItem(kv.Key, kv.Value));
+            }
+        }
+
+        foreach (var g in Groups)
+        {
+            counts.TryGetValue(g.Name, out var c);
+            g.ProfileCount = c;
+        }
+
+        if (!string.IsNullOrWhiteSpace(selectedName))
+        {
+            SelectedGroup = Groups.FirstOrDefault(g => g.Name.Equals(selectedName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        UpdateAvailableProxies();
+    }
+
+    private void UpdateAvailableProxies()
+    {
+        AvailableProxies.Clear();
+        var used = new HashSet<string>(Profiles.Select(p => p.Proxy ?? string.Empty)
+            .Where(x => !string.IsNullOrWhiteSpace(x)), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var proxy in Proxies.Where(p => !used.Contains(p.Address)))
+        {
+            AvailableProxies.Add(proxy);
+        }
+
+        if (SelectedProfileProxy != null && !AvailableProxies.Contains(SelectedProfileProxy))
+        {
+            SelectedProfileProxy = null;
         }
     }
 
