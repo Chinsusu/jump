@@ -16,7 +16,19 @@ namespace ShadowFox.UI;
 
 public partial class MainWindow : Window
 {
-    public record GroupItem(string Name, int ProfileCount);
+    public record class GroupItem
+    {
+        public string Name { get; set; }
+        public int ProfileCount { get; set; }
+        public bool Selected { get; set; }
+
+        public GroupItem(string name, int profileCount, bool selected = false)
+        {
+            Name = name;
+            ProfileCount = profileCount;
+            Selected = selected;
+        }
+    }
     public record class ProfileItem
     {
         public string Name { get; set; }
@@ -26,9 +38,8 @@ public partial class MainWindow : Window
         public string Status { get; set; }
         public string BrowserVersion { get; set; }
         public string LastEdited { get; set; }
-        public bool Selected { get; set; }
 
-        public ProfileItem(string name, string proxy, string group, string tags, string status, string browserVersion, string lastEdited, bool selected = false)
+        public ProfileItem(string name, string proxy, string group, string tags, string status, string browserVersion, string lastEdited)
         {
             Name = name;
             Proxy = proxy;
@@ -37,7 +48,6 @@ public partial class MainWindow : Window
             Status = status;
             BrowserVersion = browserVersion;
             LastEdited = lastEdited;
-            Selected = selected;
         }
     }
     public record class ProxyItem
@@ -515,6 +525,18 @@ public partial class MainWindow : Window
         }
     }
 
+    private void BulkDeleteGroups_Click(object sender, RoutedEventArgs e)
+    {
+        var selected = Groups.Where(g => g.Selected).ToList();
+        if (!selected.Any()) return;
+
+        foreach (var g in selected)
+            Groups.Remove(g);
+
+        SelectedGroup = null;
+        SaveData();
+    }
+
     private void AddGroupFromProfile_Click(object sender, RoutedEventArgs e)
     {
         var name = ProfileNewGroupBox.Text.Trim();
@@ -536,6 +558,16 @@ public partial class MainWindow : Window
         SelectedProfileGroup = newGroup;
         ProfileNewGroupBox.Clear();
         SaveData();
+    }
+
+    private void SelectAllGroups_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.CheckBox cb)
+        {
+            var isChecked = cb.IsChecked == true;
+            foreach (var g in Groups)
+                g.Selected = isChecked;
+        }
     }
 
     private void NavList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -906,29 +938,6 @@ public partial class MainWindow : Window
                 SaveData();
                 RefreshFilteredProxies();
             }
-        }
-    }
-
-    private void BulkDeleteProfiles_Click(object sender, RoutedEventArgs e)
-    {
-        var selected = Profiles.Where(p => p.Selected).ToList();
-        if (!selected.Any()) return;
-
-        foreach (var p in selected)
-            Profiles.Remove(p);
-
-        SaveData();
-        RefreshFilteredProfiles();
-    }
-
-    private void SelectAllProfiles_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is System.Windows.Controls.CheckBox cb)
-        {
-            var isChecked = cb.IsChecked == true;
-            foreach (var profile in PagedProfiles)
-                profile.Selected = isChecked;
-            RefreshFilteredProfiles();
         }
     }
 
