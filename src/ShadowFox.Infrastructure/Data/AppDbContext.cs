@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Profile> Profiles => Set<Profile>();
     public DbSet<Group> Groups => Set<Group>();
+    public DbSet<UsageSession> UsageSessions => Set<UsageSession>();
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -63,6 +64,26 @@ public class AppDbContext : DbContext
             entity.Property(g => g.Name).HasMaxLength(200).IsRequired();
             entity.Property(g => g.Description).HasMaxLength(500);
             entity.HasIndex(g => g.Name).IsUnique();
+        });
+
+        // UsageSession configuration
+        modelBuilder.Entity<UsageSession>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.UserAgent).HasMaxLength(500);
+            entity.Property(s => s.IpAddress).HasMaxLength(45); // IPv6 max length
+            entity.Property(s => s.SessionNotes).HasMaxLength(1000);
+            
+            // Configure relationship with Profile
+            entity.HasOne(s => s.Profile)
+                  .WithMany()
+                  .HasForeignKey(s => s.ProfileId)
+                  .OnDelete(DeleteBehavior.Cascade);
+                  
+            // Indexes for performance
+            entity.HasIndex(s => s.ProfileId);
+            entity.HasIndex(s => s.StartTime);
+            entity.HasIndex(s => s.EndTime);
         });
     }
 

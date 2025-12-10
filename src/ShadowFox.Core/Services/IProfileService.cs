@@ -14,6 +14,10 @@ public interface IProfileService
     Task<Result<bool>> ExistsAsync(string name, CancellationToken cancellationToken = default);
     Task<Result<string>> ExportAsync(int[] profileIds, CancellationToken cancellationToken = default);
     Task<Result<ImportResult>> ImportAsync(string jsonData, CancellationToken cancellationToken = default);
+    Task<Result<BulkOperationResult>> BulkDeleteAsync(int[] profileIds, CancellationToken cancellationToken = default);
+    Task<Result<BulkOperationResult>> BulkUpdateTagsAsync(int[] profileIds, string tags, CancellationToken cancellationToken = default);
+    Task<Result<BulkOperationResult>> BulkAssignGroupAsync(int[] profileIds, int? groupId, CancellationToken cancellationToken = default);
+    Task<Result> RecordProfileAccessAsync(int profileId, CancellationToken cancellationToken = default);
 }
 
 public class CreateProfileRequest
@@ -41,4 +45,12 @@ public class ImportResult
     public int SkippedCount { get; set; }
     public List<string> Errors { get; set; } = new();
     public List<Profile> ImportedProfiles { get; set; } = new();
+}
+
+public class BulkOperationResult
+{
+    public int SuccessCount { get; set; }
+    public int FailedCount { get; set; }
+    public List<string> Errors { get; set; } = new();
+    public List<int> ProcessedIds { get; set; } = new();
 }

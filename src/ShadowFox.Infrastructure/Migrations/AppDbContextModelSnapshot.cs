@@ -105,6 +105,44 @@ namespace ShadowFox.Infrastructure.Migrations
                     b.ToTable("Profiles");
                 });
 
+            modelBuilder.Entity("ShadowFox.Core.Models.UsageSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SessionNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EndTime");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasIndex("StartTime");
+
+                    b.ToTable("UsageSessions");
+                });
+
             modelBuilder.Entity("ShadowFox.Core.Models.Profile", b =>
                 {
                     b.HasOne("ShadowFox.Core.Models.Group", "Group")
@@ -113,6 +151,17 @@ namespace ShadowFox.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("ShadowFox.Core.Models.UsageSession", b =>
+                {
+                    b.HasOne("ShadowFox.Core.Models.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
                 });
 #pragma warning restore 612, 618
         }

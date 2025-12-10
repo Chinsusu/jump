@@ -84,4 +84,34 @@ public static class ProfileExtensions
 
         return DateTime.UtcNow - profile.LastOpenedAt.Value;
     }
+
+    public static string GetUsageStatusText(this Profile profile)
+    {
+        if (profile.IsNeverUsed())
+            return "Never used";
+
+        var timeSinceLastUsed = profile.GetTimeSinceLastUsed();
+        
+        if (timeSinceLastUsed.TotalDays < 1)
+            return "Used today";
+        else if (timeSinceLastUsed.TotalDays < 7)
+            return $"Used {(int)timeSinceLastUsed.TotalDays} day(s) ago";
+        else if (timeSinceLastUsed.TotalDays < 30)
+            return $"Used {(int)(timeSinceLastUsed.TotalDays / 7)} week(s) ago";
+        else
+            return $"Used {(int)(timeSinceLastUsed.TotalDays / 30)} month(s) ago";
+    }
+
+    public static bool IsRecentlyUsed(this Profile profile, int days = 7)
+    {
+        if (profile.LastOpenedAt == null)
+            return false;
+
+        return profile.GetTimeSinceLastUsed().TotalDays <= days;
+    }
+
+    public static bool IsFrequentlyUsed(this Profile profile, int minimumUsageCount = 10)
+    {
+        return profile.UsageCount >= minimumUsageCount;
+    }
 }

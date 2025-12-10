@@ -434,4 +434,106 @@ public class ProfileService : IProfileService
 
         return uniqueName;
     }
+
+    public async Task<Result<BulkOperationResult>> BulkDeleteAsync(int[] profileIds, CancellationToken cancellationToken = default)
+    {
+        if (profileIds == null || profileIds.Length == 0)
+            return Result<BulkOperationResult>.Failure("Profile IDs cannot be null or empty.", ErrorCode.InvalidData);
+
+        try
+        {
+            var (success, processedCount, errors) = await _profileRepository.BulkDeleteAsync(profileIds, cancellationToken);
+            
+            var result = new BulkOperationResult
+            {
+                SuccessCount = success ? processedCount : 0,
+                FailedCount = success ? 0 : profileIds.Length,
+                Errors = errors,
+                ProcessedIds = success ? profileIds.ToList() : new List<int>()
+            };
+
+            return success 
+                ? Result<BulkOperationResult>.Success(result)
+                : Result<BulkOperationResult>.Failure($"Bulk delete failed: {string.Join(", ", errors)}", ErrorCode.DatabaseError);
+        }
+        catch (Exception ex)
+        {
+            return Result<BulkOperationResult>.Failure($"Failed to perform bulk delete: {ex.Message}", ErrorCode.DatabaseError);
+        }
+    }
+
+    public async Task<Result<BulkOperationResult>> BulkUpdateTagsAsync(int[] profileIds, string tags, CancellationToken cancellationToken = default)
+    {
+        if (profileIds == null || profileIds.Length == 0)
+            return Result<BulkOperationResult>.Failure("Profile IDs cannot be null or empty.", ErrorCode.InvalidData);
+
+        try
+        {
+            var (success, processedCount, errors) = await _profileRepository.BulkUpdateTagsAsync(profileIds, tags, cancellationToken);
+            
+            var result = new BulkOperationResult
+            {
+                SuccessCount = success ? processedCount : 0,
+                FailedCount = success ? 0 : profileIds.Length,
+                Errors = errors,
+                ProcessedIds = success ? profileIds.ToList() : new List<int>()
+            };
+
+            return success 
+                ? Result<BulkOperationResult>.Success(result)
+                : Result<BulkOperationResult>.Failure($"Bulk tag update failed: {string.Join(", ", errors)}", ErrorCode.DatabaseError);
+        }
+        catch (Exception ex)
+        {
+            return Result<BulkOperationResult>.Failure($"Failed to perform bulk tag update: {ex.Message}", ErrorCode.DatabaseError);
+        }
+    }
+
+    public async Task<Result<BulkOperationResult>> BulkAssignGroupAsync(int[] profileIds, int? groupId, CancellationToken cancellationToken = default)
+    {
+        if (profileIds == null || profileIds.Length == 0)
+            return Result<BulkOperationResult>.Failure("Profile IDs cannot be null or empty.", ErrorCode.InvalidData);
+
+        try
+        {
+            var (success, processedCount, errors) = await _profileRepository.BulkAssignGroupAsync(profileIds, groupId, cancellationToken);
+            
+            var result = new BulkOperationResult
+            {
+                SuccessCount = success ? processedCount : 0,
+                FailedCount = success ? 0 : profileIds.Length,
+                Errors = errors,
+                ProcessedIds = success ? profileIds.ToList() : new List<int>()
+            };
+
+            return success 
+                ? Result<BulkOperationResult>.Success(result)
+                : Result<BulkOperationResult>.Failure($"Bulk group assignment failed: {string.Join(", ", errors)}", ErrorCode.DatabaseError);
+        }
+        catch (Exception ex)
+        {
+            return Result<BulkOperationResult>.Failure($"Failed to perform bulk group assignment: {ex.Message}", ErrorCode.DatabaseError);
+        }
+    }
+
+    public async Task<Result> RecordProfileAccessAsync(int profileId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // Get the profile
+            var profile = await _profileRepository.GetByIdAsync(profileId, cancellationToken);
+            if (profile == null)
+                return Result.Failure($"Profile with ID {profileId} not found.", ErrorCode.NotFound);
+
+            // Update profile usage tracking
+            profile.UpdateLastOpened();
+            await _profileRepository.UpdateAsync(profile, cancellationToken);
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure($"Failed to record profile access: {ex.Message}", ErrorCode.DatabaseError);
+        }
+    }
 }

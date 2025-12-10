@@ -92,10 +92,119 @@ public class InMemoryProfileRepository : IProfileRepository
         return Task.CompletedTask;
     }
 
+    public Task<bool> GroupExistsAsync(int groupId, CancellationToken cancellationToken = default)
+    {
+        // For testing purposes, assume groups 1-10 exist
+        return Task.FromResult(groupId >= 1 && groupId <= 10);
+    }
+
+    public Task<(bool Success, int ProcessedCount, List<string> Errors)> BulkDeleteAsync(int[] ids, CancellationToken cancellationToken = default)
+    {
+        var errors = new List<string>();
+        var processedCount = 0;
+
+        // Check if all profiles exist first (atomic behavior)
+        var existingProfiles = _profiles.Where(p => ids.Contains(p.Id)).ToList();
+        if (existingProfiles.Count != ids.Length)
+        {
+            var foundIds = existingProfiles.Select(p => p.Id).ToHashSet();
+            var missingIds = ids.Where(id => !foundIds.Contains(id));
+            foreach (var missingId in missingIds)
+            {
+                errors.Add($"Profile with ID {missingId} not found.");
+            }
+            return Task.FromResult((false, 0, errors));
+        }
+
+        // Delete all profiles
+        foreach (var profile in existingProfiles)
+        {
+            _profiles.Remove(profile);
+            processedCount++;
+        }
+
+        return Task.FromResult((true, processedCount, errors));
+    }
+
+    public Task<(bool Success, int ProcessedCount, List<string> Errors)> BulkUpdateTagsAsync(int[] ids, string tags, CancellationToken cancellationToken = default)
+    {
+        var errors = new List<string>();
+        var processedCount = 0;
+
+        // Check if all profiles exist first (atomic behavior)
+        var existingProfiles = _profiles.Where(p => ids.Contains(p.Id)).ToList();
+        if (existingProfiles.Count != ids.Length)
+        {
+            var foundIds = existingProfiles.Select(p => p.Id).ToHashSet();
+            var missingIds = ids.Where(id => !foundIds.Contains(id));
+            foreach (var missingId in missingIds)
+            {
+                errors.Add($"Profile with ID {missingId} not found.");
+            }
+            return Task.FromResult((false, 0, errors));
+        }
+
+        // Update tags for all profiles
+        foreach (var profile in existingProfiles)
+        {
+            profile.Tags = string.IsNullOrWhiteSpace(tags) ? null : tags;
+            profile.UpdateModified();
+            processedCount++;
+        }
+
+        return Task.FromResult((true, processedCount, errors));
+    }
+
+    public Task<(bool Success, int ProcessedCount, List<string> Errors)> BulkAssignGroupAsync(int[] ids, int? groupId, CancellationToken cancellationToken = default)
+    {
+        var errors = new List<string>();
+        var processedCount = 0;
+
+        // Check if all profiles exist first (atomic behavior)
+        var existingProfiles = _profiles.Where(p => ids.Contains(p.Id)).ToList();
+        if (existingProfiles.Count != ids.Length)
+        {
+            var foundIds = existingProfiles.Select(p => p.Id).ToHashSet();
+            var missingIds = ids.Where(id => !foundIds.Contains(id));
+            foreach (var missingId in missingIds)
+            {
+                errors.Add($"Profile with ID {missingId} not found.");
+            }
+            return Task.FromResult((false, 0, errors));
+        }
+
+        // If groupId is provided, validate that the group exists
+        if (groupId.HasValue && groupId.Value > 0)
+        {
+            var groupExists = GroupExistsAsync(groupId.Value).Result;
+            if (!groupExists)
+            {
+                errors.Add($"Group with ID {groupId.Value} not found.");
+                return Task.FromResult((false, 0, errors));
+            }
+        }
+
+        // Update group assignment for all profiles
+        foreach (var profile in existingProfiles)
+        {
+            profile.GroupId = groupId == 0 ? null : groupId;
+            profile.UpdateModified();
+            processedCount++;
+        }
+
+        return Task.FromResult((true, processedCount, errors));
+    }
+
     public void AddProfile(Profile profile)
     {
         profile.Id = _nextId++;
         _profiles.Add(profile);
+    }
+
+    public void Clear()
+    {
+        _profiles.Clear();
+        _nextId = 1;
     }
 }
 

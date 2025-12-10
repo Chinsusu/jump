@@ -17,9 +17,10 @@ public static class ServiceCollectionExtensions
     {
         // Register core services
         services.AddSingleton<FingerprintGenerator>();
+        services.AddScoped<IProfileService, ProfileService>();
+        services.AddScoped<IUsageTrackingService, UsageTrackingService>();
         
         // Add other core services as they are implemented
-        // services.AddScoped<IProfileService, ProfileService>();
         // services.AddScoped<IGroupService, GroupService>();
         // services.AddScoped<IFingerprintService, FingerprintService>();
 

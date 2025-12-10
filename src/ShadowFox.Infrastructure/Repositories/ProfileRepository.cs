@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using ShadowFox.Core.Models;
 using ShadowFox.Core.Repositories;
 using ShadowFox.Infrastructure.Data;
@@ -125,6 +126,9 @@ public sealed class ProfileRepository : IProfileRepository
     public Task<Profile?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
         db.Profiles.Include(p => p.Group).FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
+    public Task<Profile?> GetByNameAsync(string name, CancellationToken cancellationToken = default) =>
+        db.Profiles.Include(p => p.Group).FirstOrDefaultAsync(p => p.Name == name, cancellationToken);
+
     public async Task<Profile> AddAsync(Profile profile, CancellationToken cancellationToken = default)
     {
         db.Profiles.Add(profile);
@@ -170,5 +174,225 @@ public sealed class ProfileRepository : IProfileRepository
         }
 
         await db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<bool> GroupExistsAsync(int groupId, CancellationToken cancellationToken = default)
+    {
+        return await db.Groups.AnyAsync(g => g.Id == groupId, cancellationToken);
+    }
+
+    public async Task<(bool Success, int ProcessedCount, List<string> Errors)> BulkDeleteAsync(int[] ids, CancellationToken cancellationToken = default)
+    {
+        var errors = new List<string>();
+        var processedCount = 0;
+
+        try
+        {
+            // Try to use transaction if supported, otherwise proceed without it
+            IDbContextTransaction? transaction = null;
+            try
+            {
+                transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+            }
+            catch (InvalidOperationException)
+            {
+                // In-memory database doesn't support transactions, continue without it
+            }
+
+            try
+            {
+                // Verify all profiles exist before deleting any
+                var existingProfiles = await db.Profiles.Where(p => ids.Contains(p.Id)).ToListAsync(cancellationToken);
+                
+                if (existingProfiles.Count != ids.Length)
+                {
+                    var foundIds = existingProfiles.Select(p => p.Id).ToHashSet();
+                    var missingIds = ids.Where(id => !foundIds.Contains(id));
+                    foreach (var missingId in missingIds)
+                    {
+                        errors.Add($"Profile with ID {missingId} not found.");
+                    }
+                    if (transaction != null)
+                        await transaction.RollbackAsync(cancellationToken);
+                    return (false, 0, errors);
+                }
+
+                // Delete all profiles
+                db.Profiles.RemoveRange(existingProfiles);
+                await db.SaveChangesAsync(cancellationToken);
+                processedCount = existingProfiles.Count;
+
+                if (transaction != null)
+                    await transaction.CommitAsync(cancellationToken);
+                return (true, processedCount, errors);
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null)
+                    await transaction.RollbackAsync(cancellationToken);
+                errors.Add($"Database error: {ex.Message}");
+                return (false, 0, errors);
+            }
+            finally
+            {
+                transaction?.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"Database error: {ex.Message}");
+            return (false, 0, errors);
+        }
+    }
+
+    public async Task<(bool Success, int ProcessedCount, List<string> Errors)> BulkUpdateTagsAsync(int[] ids, string tags, CancellationToken cancellationToken = default)
+    {
+        var errors = new List<string>();
+        var processedCount = 0;
+
+        try
+        {
+            // Try to use transaction if supported, otherwise proceed without it
+            IDbContextTransaction? transaction = null;
+            try
+            {
+                transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+            }
+            catch (InvalidOperationException)
+            {
+                // In-memory database doesn't support transactions, continue without it
+            }
+
+            try
+            {
+                // Verify all profiles exist before updating any
+                var existingProfiles = await db.Profiles.Where(p => ids.Contains(p.Id)).ToListAsync(cancellationToken);
+                
+                if (existingProfiles.Count != ids.Length)
+                {
+                    var foundIds = existingProfiles.Select(p => p.Id).ToHashSet();
+                    var missingIds = ids.Where(id => !foundIds.Contains(id));
+                    foreach (var missingId in missingIds)
+                    {
+                        errors.Add($"Profile with ID {missingId} not found.");
+                    }
+                    if (transaction != null)
+                        await transaction.RollbackAsync(cancellationToken);
+                    return (false, 0, errors);
+                }
+
+                // Update tags for all profiles
+                foreach (var profile in existingProfiles)
+                {
+                    profile.Tags = string.IsNullOrWhiteSpace(tags) ? null : tags;
+                    profile.UpdateModified();
+                }
+
+                await db.SaveChangesAsync(cancellationToken);
+                processedCount = existingProfiles.Count;
+
+                if (transaction != null)
+                    await transaction.CommitAsync(cancellationToken);
+                return (true, processedCount, errors);
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null)
+                    await transaction.RollbackAsync(cancellationToken);
+                errors.Add($"Database error: {ex.Message}");
+                return (false, 0, errors);
+            }
+            finally
+            {
+                transaction?.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"Database error: {ex.Message}");
+            return (false, 0, errors);
+        }
+    }
+
+    public async Task<(bool Success, int ProcessedCount, List<string> Errors)> BulkAssignGroupAsync(int[] ids, int? groupId, CancellationToken cancellationToken = default)
+    {
+        var errors = new List<string>();
+        var processedCount = 0;
+
+        try
+        {
+            // Try to use transaction if supported, otherwise proceed without it
+            IDbContextTransaction? transaction = null;
+            try
+            {
+                transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+            }
+            catch (InvalidOperationException)
+            {
+                // In-memory database doesn't support transactions, continue without it
+            }
+
+            try
+            {
+                // Verify all profiles exist before updating any
+                var existingProfiles = await db.Profiles.Where(p => ids.Contains(p.Id)).ToListAsync(cancellationToken);
+                
+                if (existingProfiles.Count != ids.Length)
+                {
+                    var foundIds = existingProfiles.Select(p => p.Id).ToHashSet();
+                    var missingIds = ids.Where(id => !foundIds.Contains(id));
+                    foreach (var missingId in missingIds)
+                    {
+                        errors.Add($"Profile with ID {missingId} not found.");
+                    }
+                    if (transaction != null)
+                        await transaction.RollbackAsync(cancellationToken);
+                    return (false, 0, errors);
+                }
+
+                // If groupId is provided, validate that the group exists
+                if (groupId.HasValue && groupId.Value > 0)
+                {
+                    var groupExists = await db.Groups.AnyAsync(g => g.Id == groupId.Value, cancellationToken);
+                    if (!groupExists)
+                    {
+                        errors.Add($"Group with ID {groupId.Value} not found.");
+                        if (transaction != null)
+                            await transaction.RollbackAsync(cancellationToken);
+                        return (false, 0, errors);
+                    }
+                }
+
+                // Update group assignment for all profiles
+                foreach (var profile in existingProfiles)
+                {
+                    profile.GroupId = groupId == 0 ? null : groupId;
+                    profile.UpdateModified();
+                }
+
+                await db.SaveChangesAsync(cancellationToken);
+                processedCount = existingProfiles.Count;
+
+                if (transaction != null)
+                    await transaction.CommitAsync(cancellationToken);
+                return (true, processedCount, errors);
+            }
+            catch (Exception ex)
+            {
+                if (transaction != null)
+                    await transaction.RollbackAsync(cancellationToken);
+                errors.Add($"Database error: {ex.Message}");
+                return (false, 0, errors);
+            }
+            finally
+            {
+                transaction?.Dispose();
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"Database error: {ex.Message}");
+            return (false, 0, errors);
+        }
     }
 }
