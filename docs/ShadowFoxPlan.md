@@ -22,7 +22,7 @@
 
 ## 3. Functional requirements
 ### Core features
-1) Profile Management: create/clone/import/export/delete, random fingerprint (Basic/Advanced/Ultra), edit thu cong, tag/group/search/bulk.
+1) Profile Management: ✅ create/clone/import/export/delete, ✅ random fingerprint (Basic/Advanced/Ultra), edit thu cong, tag/group/search/bulk.
 2) Fingerprint spoofing: UA, canvas noise, WebGL vendor/renderer spoof, AudioContext noise, fonts override, WebRTC fake/block, HW concurrency, screen/dpr, timezone, languages, navigator.* spoof, chrome.runtime spoof, OffscreenCanvas/SVG patch.
 3) Proxy Management: add list HTTP/SOCKS5/SSH, checker (speed/anonymity/geo), bind per profile hoac rotate theo list, schedule rotate (time-based hoac request-based).
 4) Browser Launcher: moi profile mo mot cua so Chromium rieng, auto inject spoofing JS/CSS, cookie import/export, extension per profile.
@@ -121,8 +121,8 @@ Personalities (
 ## 7. Development phases (uoc tinh cho 1 dev full-time)
 | Phase | Noi dung | Thoi gian | Ket qua |
 |-------|----------|-----------|---------|
-| 1 | Setup project, WPF shell, MVVM base, DI, SQLite | 5-7 ngay | UI chinh chay duoc |
-| 2 | Profile CRUD + Fingerprint Generator (Ultra) | 10-14 ngay | Tao profile fake sau |
+| 1 | ✅ Setup project, WPF shell, MVVM base, DI, SQLite | 5-7 ngay | ✅ UI chinh chay duoc |
+| 2 | ✅ Profile CRUD + Fingerprint Generator (Ultra) + Import/Export | 10-14 ngay | ✅ Tao profile fake sau, import/export JSON |
 | 3 | CefSharp integration + Spoofing JS injection | 10-12 ngay | Browser mo, spoof fingerprint |
 | 4 | Proxy manager + per-profile proxy | 7-10 ngay | Proxy chay, checker |
 | 5 | Personality & Behavior Engine | 12-16 ngay | Hanh vi giong nguoi |
