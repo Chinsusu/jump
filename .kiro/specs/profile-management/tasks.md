@@ -61,21 +61,32 @@
   - **Validates: Requirements 2.1, 2.4**
 
 - [ ] 4. Create Group entity and management system
+
+
+
+
   - Implement Group entity with name uniqueness constraints
   - Create GroupService with CRUD operations and validation
   - Add group assignment validation and referential integrity handling
   - Implement group deletion with profile reference cleanup
   - _Requirements: 3.1, 3.4, 5.4_
 
-- [ ] 4.1 Write property test for group assignment validation
+- [x] 4.1 Write property test for group assignment validation
+
   - **Property 8: Group assignment validates existence**
   - **Validates: Requirements 3.1, 5.4**
 
-- [ ] 4.2 Write property test for group deletion cleanup
+- [x] 4.2 Write property test for group deletion cleanup
+
   - **Property 11: Group deletion updates profile references**
   - **Validates: Requirements 3.4**
 
-- [ ] 5. Implement database layer with EF Core
+- [x] 5. Implement database layer with EF Core
+
+
+
+
+
   - Set up AppDbContext with Profile and Group entities
   - Create database migrations with proper indexes and constraints
   - Implement ProfileRepository with all CRUD operations and filtering
@@ -83,15 +94,21 @@
   - Configure SQLite with encryption support for sensitive data
   - _Requirements: 1.5, 3.2, 8.1, 8.2, 8.4_
 
-- [ ] 5.1 Write property test for immediate persistence
+- [x] 5.1 Write property test for immediate persistence
+
+
   - **Property 4: Profile persistence is immediate**
   - **Validates: Requirements 1.5**
 
-- [ ] 5.2 Write property test for tag storage format
+- [x] 5.2 Write property test for tag storage format
+
+
   - **Property 9: Tags are stored as comma-separated strings**
   - **Validates: Requirements 3.2**
 
-- [ ] 5.3 Write property test for data encryption
+- [x] 5.3 Write property test for data encryption
+
+
   - **Property 22: Sensitive data is encrypted**
   - **Validates: Requirements 8.1**
 

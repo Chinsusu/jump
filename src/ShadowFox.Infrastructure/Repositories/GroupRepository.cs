@@ -1,16 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using ShadowFox.Core.Models;
+using ShadowFox.Core.Repositories;
 using ShadowFox.Infrastructure.Data;
 
 namespace ShadowFox.Infrastructure.Repositories;
-
-public interface IGroupRepository
-{
-    Task<List<Group>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<bool> ExistsAsync(string name, CancellationToken cancellationToken = default);
-    Task<Group> AddAsync(Group group, CancellationToken cancellationToken = default);
-    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
-}
 
 public sealed class GroupRepository : IGroupRepository
 {
@@ -27,6 +20,9 @@ public sealed class GroupRepository : IGroupRepository
             .OrderBy(g => g.Name)
             .ToListAsync(cancellationToken);
     }
+
+    public Task<Group?> GetByIdAsync(int id, CancellationToken cancellationToken = default) =>
+        db.Groups.FirstOrDefaultAsync(g => g.Id == id, cancellationToken);
 
     public Task<bool> ExistsAsync(string name, CancellationToken cancellationToken = default) =>
         db.Groups.AnyAsync(g => g.Name == name, cancellationToken);
