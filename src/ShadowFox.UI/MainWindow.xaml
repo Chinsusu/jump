@@ -192,10 +192,15 @@
                                     <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="120"/>
                                     <DataGridTextColumn Header="Browser Vers." Binding="{Binding BrowserVersion}" Width="120"/>
                                     <DataGridTextColumn Header="Last edited" Binding="{Binding LastEdited}" Width="140"/>
-                                    <DataGridTemplateColumn Header="Action" Width="160">
+                                    <DataGridTemplateColumn Header="Action" Width="240">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                    <Button Content="{Binding Status, Converter={StaticResource StatusToActionConverter}}"
+                                                            Padding="8,4"
+                                                            Margin="0,0,6,0"
+                                                            Tag="{Binding Name}"
+                                                            Click="ProfileAction_Click"/>
                                                     <Button Content="Edit" Padding="8,4" Margin="0,0,6,0" Tag="{Binding Name}" Click="EditProfileRow_Click"/>
                                                     <Button Content="Delete" Padding="8,4" Tag="{Binding Name}" Click="DeleteProfileRow_Click"/>
                                                 </StackPanel>
