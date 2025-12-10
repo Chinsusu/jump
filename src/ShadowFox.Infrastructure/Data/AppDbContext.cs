@@ -76,12 +76,26 @@ public class AppDbContext : DbContext
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreatedAt = DateTime.UtcNow;
-                entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                // Only set CreatedAt if it's not already set (default value)
+                if (entry.Entity.CreatedAt == default)
+                {
+                    entry.Entity.CreatedAt = DateTime.UtcNow;
+                }
+                // Only set LastModifiedAt if it's not already set (default value)
+                if (entry.Entity.LastModifiedAt == default)
+                {
+                    entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                }
             }
             else if (entry.State == EntityState.Modified)
             {
-                entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                // Don't override LastModifiedAt if it was explicitly set by the service
+                // We can check if it was recently updated (within the last second) to avoid overriding
+                var timeSinceModified = DateTime.UtcNow - entry.Entity.LastModifiedAt;
+                if (timeSinceModified.TotalSeconds > 1)
+                {
+                    entry.Entity.LastModifiedAt = DateTime.UtcNow;
+                }
             }
         }
 
